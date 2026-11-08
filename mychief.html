@@ -1,0 +1,3860 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+ content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#102524">
+<title>Afterglow Kitchen — ครัวสองเรา</title>
+
+<style>
+:root {
+  --ink:#f8f5e9;
+  --muted:#b8c8c3;
+  --gold:#ebc685;
+  --p1:#66e3ce;
+  --p2:#ffa785;
+  --panel:rgba(10,25,27,.9);
+}
+* { box-sizing:border-box; }
+html,body {
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
+  color:var(--ink);
+  font-family:system-ui,-apple-system,"Tahoma",sans-serif;
+  background:#102524;
+  overscroll-behavior:none;
+}
+body {
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:none;
+}
+button,select { font:inherit; }
+button {
+  cursor:pointer;
+  color:inherit;
+  border:1px solid #ffffff25;
+  background:#ffffff0d;
+  border-radius:13px;
+  padding:10px 15px;
+  transition:background .15s,transform .15s;
+}
+button:hover { background:#ffffff18; }
+button:active { transform:scale(.97); }
+button:focus-visible,select:focus-visible {
+  outline:2px solid var(--gold);
+}
+button:disabled { opacity:.4;cursor:wait; }
+select {
+  width:100%;
+  background:#162e30;
+  color:var(--ink);
+  border:1px solid #ffffff26;
+  border-radius:11px;
+  padding:10px;
+}
+[hidden] { display:none!important; }
+#world,#labels,#shade { position:absolute;inset:0; }
+#world canvas {
+  display:block;
+  width:100%;
+  height:100%;
+  touch-action:none;
+}
+#labels {
+  pointer-events:none;
+  overflow:hidden;
+}
+#shade {
+  pointer-events:none;
+  background:linear-gradient(
+    #06151538,
+    transparent 24%,
+    transparent 68%,
+    #07151770
+  );
+}
+.overlay {
+  position:absolute;
+  inset:0;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:#05111399;
+  backdrop-filter:blur(9px);
+  -webkit-backdrop-filter:blur(9px);
+  overflow:auto;
+  touch-action:pan-y;
+}
+#menu {
+  background:linear-gradient(90deg,#07181edb,#07181e45);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
+.shell {
+  display:grid;
+  grid-template-columns:minmax(230px,1fr) minmax(330px,450px);
+  gap:42px;
+  width:min(1100px,100%);
+  align-items:center;
+  margin:auto;
+}
+.hero {
+  align-self:center;
+  text-shadow:0 3px 22px #0008;
+}
+.eyebrow {
+  font-size:11px;
+  letter-spacing:4px;
+  color:var(--gold);
+  font-weight:800;
+}
+h1 {
+  font-size:clamp(45px,7vw,90px);
+  line-height:.95;
+  letter-spacing:-4px;
+  margin:18px 0;
+}
+h1 span {
+  display:block;
+  color:var(--gold);
+  font-weight:300;
+}
+.hero p {
+  max-width:390px;
+  line-height:1.8;
+  color:#e0ebe7;
+}
+.hero .tag {
+  display:inline-block;
+  border:1px solid #e9c88a55;
+  padding:7px 11px;
+  border-radius:30px;
+  font-size:11px;
+}
+.panel {
+  border:1px solid #ffffff20;
+  background:var(--panel);
+  padding:22px;
+  border-radius:24px;
+  box-shadow:0 25px 100px #0005;
+}
+h2 { font-size:24px;margin:0 0 10px; }
+.small {
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.7;
+}
+.themes {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  margin:14px 0;
+}
+.theme {
+  padding:13px 5px;
+  border-radius:15px;
+  text-align:center;
+  background:linear-gradient(140deg,var(--theme-color),#102526);
+}
+.theme strong { display:block;font-size:13px; }
+.theme span { font-size:10px;opacity:.8; }
+.theme .icon {
+  display:block;
+  font-size:26px;
+  margin-bottom:5px;
+}
+.theme.active,.level.active {
+  border-color:var(--gold);
+  box-shadow:0 0 0 1px #ebc68565;
+}
+.levels {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+}
+.level { font-size:12px;padding:10px 5px; }
+.level b {
+  display:block;
+  font-size:16px;
+  margin-top:3px;
+  color:var(--gold);
+}
+.fields {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:16px 0;
+}
+label.field {
+  display:block;
+  font-size:11px;
+  color:var(--muted);
+}
+.field select { margin-top:5px;font-size:13px; }
+.primary {
+  background:linear-gradient(135deg,#e7c894,#f7dfac);
+  color:#273331;
+  border:0;
+  font-weight:800;
+}
+.primary:hover { background:#ffe5b4; }
+.wide { width:100%;padding:14px; }
+.row {
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.details {
+  margin-top:13px;
+  font-size:12px;
+  color:var(--muted);
+}
+.details summary { cursor:pointer;padding:4px 0; }
+.details p { line-height:1.7;margin:7px 0; }
+
+#hud {
+  position:absolute;
+  z-index:5;
+  left:max(12px,env(safe-area-inset-left));
+  right:max(12px,env(safe-area-inset-right));
+  top:max(10px,env(safe-area-inset-top));
+  pointer-events:none;
+}
+.topbar { display:flex;gap:7px;align-items:center; }
+.badge,.iconbtn {
+  border:1px solid #ffffff25;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  background:#0b2024e6;
+  box-shadow:0 4px 15px #0002;
+}
+.badge {
+  border-radius:12px;
+  padding:8px 12px;
+  font-size:12px;
+  white-space:nowrap;
+}
+.badge strong { font-size:16px;color:var(--gold); }
+#clock { font-variant-numeric:tabular-nums;font-size:23px; }
+.spacer { flex:1; }
+.iconbtn {
+  pointer-events:auto;
+  padding:9px 12px;
+  font-size:14px;
+}
+#orders {
+  display:flex;
+  gap:7px;
+  margin-top:9px;
+  overflow:hidden;
+}
+.order {
+  width:170px;
+  max-width:23vw;
+  flex-shrink:0;
+  padding:9px 11px;
+  border:1px solid #ffffff30;
+  border-radius:13px;
+  background:#f7f1dff2;
+  color:#293b38;
+  box-shadow:0 7px 25px #0002;
+}
+.order .title {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:4px;
+  font-weight:800;
+  font-size:12px;
+  white-space:nowrap;
+}
+.order .ingredients {
+  font-size:10px;
+  margin-top:4px;
+  opacity:.85;
+}
+.orderTime { font-variant-numeric:tabular-nums; }
+.track {
+  height:4px;
+  background:#0e242226;
+  border-radius:10px;
+  margin-top:7px;
+  overflow:hidden;
+}
+.track b {
+  display:block;
+  height:100%;
+  background:#459f80;
+  transition:width .12s linear;
+}
+.order.urgent { background:#ffe0cc; }
+.order.urgent .track b { background:#dc705c; }
+
+.stationLabel {
+  position:absolute;
+  transform:translate(-50%,-100%);
+  padding:4px 7px;
+  background:#10282ce6;
+  border:1px solid #ffffff30;
+  border-radius:8px;
+  text-align:center;
+  font-size:10px;
+  color:#f5f3e6;
+  white-space:nowrap;
+  box-shadow:0 2px 10px #0002;
+}
+.stationLabel small {
+  display:block;
+  font-size:9px;
+  color:#d8e4da;
+}
+.stationLabel .track { height:3px;margin-top:4px; }
+.stationLabel.near1 { border-color:var(--p1); }
+.stationLabel.near2 { border-color:var(--p2); }
+.stationLabel.ready { background:#225446f2; }
+.stationLabel.burnt { background:#662f27f2; }
+
+#toast {
+  position:absolute;
+  left:50%;
+  top:64%;
+  transform:translate(-50%,8px);
+  z-index:12;
+  max-width:80vw;
+  text-align:center;
+  background:#0d2329f2;
+  border:1px solid #ffffff35;
+  border-radius:15px;
+  padding:10px 17px;
+  font-size:13px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s,transform .2s;
+}
+#toast.show { opacity:1;transform:translate(-50%,0); }
+
+#dock {
+  position:absolute;
+  z-index:8;
+  bottom:max(12px,env(safe-area-inset-bottom));
+  left:max(14px,env(safe-area-inset-left));
+  right:max(14px,env(safe-area-inset-right));
+  display:flex;
+  justify-content:space-between;
+  pointer-events:none;
+}
+.pad {
+  display:flex;
+  align-items:flex-end;
+  gap:12px;
+  pointer-events:none;
+  position:relative;
+  color:var(--p1);
+}
+.pad.p2 { color:var(--p2);flex-direction:row-reverse; }
+.stick {
+  width:116px;
+  height:116px;
+  border-radius:50%;
+  position:relative;
+  pointer-events:auto;
+  touch-action:none;
+  border:1px solid currentColor;
+  background:radial-gradient(circle,#1a41465c,#0e252c80);
+  box-shadow:inset 0 0 28px #ffffff08,0 6px 30px #0003;
+}
+.stick:before,.stick:after {
+  content:"";
+  position:absolute;
+  background:currentColor;
+  opacity:.15;
+}
+.stick:before { width:1px;height:76%;left:50%;top:12%; }
+.stick:after { height:1px;width:76%;top:50%;left:12%; }
+.thumb {
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:49px;
+  height:49px;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:linear-gradient(135deg,#e8fffec9,#6fb6b6a6);
+  border:2px solid #ffffff85;
+  box-shadow:0 6px 14px #0004;
+}
+.p2 .thumb {
+  background:linear-gradient(135deg,#ffead5d9,#d89276a6);
+}
+.stickTag {
+  position:absolute;
+  bottom:6px;
+  left:0;
+  right:0;
+  text-align:center;
+  font-size:9px;
+  letter-spacing:1px;
+  pointer-events:none;
+  opacity:.8;
+}
+.actions {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:7px;
+  pointer-events:auto;
+}
+.action {
+  width:76px;
+  height:76px;
+  border-radius:50%;
+  padding:5px;
+  color:#173632;
+  background:linear-gradient(145deg,#b4f3df,#71cdbb);
+  border:2px solid #dcfff6a6;
+  font-size:11px;
+  font-weight:800;
+  box-shadow:0 6px 0 #23574d,0 9px 22px #0005;
+  touch-action:none;
+}
+.p2 .action {
+  background:linear-gradient(145deg,#ffe0b8,#efa87f);
+  border-color:#ffedce;
+  color:#523323;
+  box-shadow:0 6px 0 #8b5843,0 9px 22px #0005;
+}
+.action.pressed {
+  transform:translateY(4px);
+  box-shadow:0 2px 0 #23574d;
+}
+.dash {
+  padding:6px 14px;
+  font-size:10px;
+  background:#122c31d9;
+  touch-action:none;
+}
+.handBadge {
+  position:absolute;
+  top:-32px;
+  left:0;
+  right:0;
+  text-align:center;
+  color:#ecf5ef;
+  font-size:11px;
+  text-shadow:0 2px 7px #000;
+  white-space:nowrap;
+}
+#guide {
+  position:absolute;
+  bottom:17px;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  font-size:10px;
+  color:#d4e6dfb3;
+  pointer-events:none;
+}
+.modal {
+  width:min(560px,100%);
+  max-height:95%;
+  overflow:auto;
+  touch-action:pan-y;
+}
+.modal p { font-size:13px;line-height:1.8;color:var(--muted); }
+.recipeTable {
+  width:100%;
+  border-collapse:collapse;
+  margin:15px 0;
+  font-size:12px;
+}
+.recipeTable td,.recipeTable th {
+  padding:9px 6px;
+  text-align:left;
+  border-bottom:1px solid #ffffff16;
+}
+.recipeTable th { color:var(--gold); }
+.scoregrid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+  margin:18px 0;
+}
+.scoregrid div {
+  background:#ffffff08;
+  border-radius:14px;
+  padding:13px 8px;
+  text-align:center;
+  font-size:11px;
+  color:var(--muted);
+}
+.scoregrid b { display:block;color:var(--ink);font-size:26px; }
+#stars {
+  font-size:47px;
+  letter-spacing:10px;
+  color:var(--gold);
+  margin:12px 0;
+}
+#boot {
+  position:absolute;
+  inset:0;
+  z-index:99;
+  background:#102524;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  padding:24px;
+}
+.loader {
+  width:38px;
+  height:38px;
+  border:2px solid #ffffff20;
+  border-top-color:var(--gold);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:0 auto 20px;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+#portraitHint {
+  display:none;
+  position:absolute;
+  bottom:155px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#10282de6;
+  border-radius:20px;
+  padding:6px 12px;
+  font-size:10px;
+  white-space:nowrap;
+  pointer-events:none;
+  z-index:7;
+}
+
+/* เมนูบนหน้าจอขนาดเล็ก */
+@media(max-width:760px) {
+  .overlay { padding:12px; }
+  .shell {
+    grid-template-columns:1fr;
+    max-width:470px;
+    gap:12px;
+  }
+  .hero { display:none; }
+  .panel { padding:17px;border-radius:20px; }
+  .theme { padding:9px 4px; }
+  .theme .icon { font-size:21px; }
+  #guide { display:none; }
+}
+
+@media(max-height:550px) and (orientation:landscape) {
+  .shell {
+    grid-template-columns:1fr 1.4fr;
+    max-width:870px;
+    gap:24px;
+  }
+  .hero { display:block; }
+  h1 { font-size:51px; }
+  .hero p { font-size:12px; }
+  .panel { padding:14px; }
+  .themes { margin:9px 0; }
+  .theme { padding:6px 3px; }
+  .theme .icon { font-size:18px;margin:0; }
+  .fields { margin:9px 0;gap:8px; }
+  .field select { padding:6px; }
+  .details { margin-top:7px; }
+  .wide { padding:10px; }
+}
+
+@media(orientation:portrait) {
+  #portraitHint { display:block; }
+  #stageBadge { display:none; }
+  .order { max-width:30vw;width:132px;padding:7px; }
+  .order .title { font-size:10px; }
+  .order .ingredients { font-size:8px; }
+  .pad { gap:7px; }
+  .stick { width:90px;height:90px; }
+  .action { width:64px;height:64px;font-size:10px; }
+  .dash { padding:5px 10px; }
+  .thumb { width:39px;height:39px; }
+  .stationLabel { font-size:8px;padding:3px 4px; }
+  .stationLabel small { font-size:7px; }
+}
+
+/* ======================================
+   MOBILE UPDATE: ครัวใหญ่ขึ้น + UI กระชับ
+   ====================================== */
+@media(max-height:600px) and (orientation:landscape) {
+  #hud {
+    top:max(5px,env(safe-area-inset-top));
+    left:max(10px,env(safe-area-inset-left));
+    right:max(10px,env(safe-area-inset-right));
+  }
+  .topbar { gap:5px; }
+  .badge {
+    padding:4px 8px;
+    border-radius:9px;
+    font-size:10px;
+  }
+  .badge strong { font-size:13px; }
+  #clock { font-size:18px; }
+  #stageBadge { display:none; }
+  .iconbtn {
+    min-width:36px;
+    min-height:32px;
+    padding:5px 9px;
+  }
+  #orders { margin-top:5px;gap:5px; }
+  .order {
+    width:150px;
+    max-width:23vw;
+    padding:5px 8px;
+    border-radius:10px;
+  }
+  .order .title { font-size:10px; }
+  .order .ingredients { margin-top:2px;font-size:9px; }
+  .order .track { height:3px;margin-top:4px; }
+  #dock {
+    bottom:max(8px,env(safe-area-inset-bottom));
+    left:max(10px,env(safe-area-inset-left));
+    right:max(10px,env(safe-area-inset-right));
+  }
+  .pad { gap:9px; }
+  .stick {
+    width:88px;
+    height:88px;
+    background:radial-gradient(circle,#24484c55,#10272e70);
+  }
+  .thumb { width:40px;height:40px; }
+  .action { width:66px;height:66px;font-size:11px; }
+  .actions { gap:7px; }
+  .dash {
+    min-width:60px;
+    min-height:32px;
+    padding:5px 10px;
+    font-size:10px;
+  }
+  .handBadge { top:-25px;font-size:11px; }
+  .stationLabel {
+    font-size:10px;
+    padding:3px 5px;
+    background:#10282ce8;
+  }
+  .stationLabel small { font-size:9px; }
+  .stationLabel.near1,.stationLabel.near2 {
+    z-index:3;
+    font-size:12px;
+    border-width:2px;
+    box-shadow:0 3px 14px #0006;
+  }
+  .stationLabel.ready,.stationLabel.burnt { z-index:2; }
+  #toast {
+    top:58%;
+    max-width:58vw;
+    padding:8px 12px;
+    font-size:12px;
+  }
+  #guide { display:none; }
+}
+
+@media(max-width:600px) and (orientation:portrait) {
+  .stationLabel {
+    font-size:9px;
+    background:#10282ce8;
+  }
+  .stationLabel.near1,.stationLabel.near2 {
+    z-index:3;
+    font-size:11px;
+    border-width:2px;
+  }
+  .stationLabel small { font-size:8px; }
+  #portraitHint {
+    bottom:max(148px,calc(env(safe-area-inset-bottom) + 135px));
+  }
+}
+</style>
+</head>
+
+<body>
+<div id="world"></div>
+<div id="shade"></div>
+<div id="labels"></div>
+
+<div id="hud" hidden>
+  <div class="topbar">
+    <div class="badge" id="stageBadge">FOREST TABLE</div>
+    <div class="badge"><strong id="clock">2:00</strong></div>
+    <div class="badge">เสิร์ฟ <strong id="served">0 / 3</strong></div>
+    <div class="badge">
+      <strong id="score">0</strong>
+      <span id="combo"></span>
+    </div>
+    <div class="spacer"></div>
+    <button class="iconbtn" id="soundBtn" title="เสียง">♪</button>
+    <button class="iconbtn" id="fullBtn" title="เต็มจอ">⛶</button>
+    <button class="iconbtn" id="pauseBtn" title="พักเกม">Ⅱ</button>
+  </div>
+  <div id="orders"></div>
+</div>
+
+<div id="dock" hidden>
+  <div class="pad" id="pad0">
+    <div class="handBadge" id="hand0">P1 · มือว่าง</div>
+    <div class="stick" id="stick0">
+      <div class="thumb"></div>
+      <div class="stickTag">P1 · MOVE</div>
+    </div>
+    <div class="actions">
+      <button class="dash" id="dash0">พุ่ง</button>
+      <button class="action" id="action0">หยิบ / ทำ</button>
+    </div>
+  </div>
+
+  <div class="pad p2" id="pad1">
+    <div class="handBadge" id="hand1">P2 · มือว่าง</div>
+    <div class="stick" id="stick1">
+      <div class="thumb"></div>
+      <div class="stickTag">P2 · MOVE</div>
+    </div>
+    <div class="actions">
+      <button class="dash" id="dash1">พุ่ง</button>
+      <button class="action" id="action1">หยิบ / ทำ</button>
+    </div>
+  </div>
+</div>
+
+<div id="guide" hidden>
+  P1: WASD · E ทำ · Space พุ่ง |
+  P2: ลูกศร · Enter ทำ · / พุ่ง
+</div>
+<div id="portraitHint" hidden>
+  หมุนจอแนวนอน เพื่อให้ครัวและตัวละครใหญ่ขึ้น
+</div>
+<div id="toast"></div>
+
+<div id="menu" class="overlay">
+  <div class="shell">
+    <div class="hero">
+      <div class="eyebrow">A LITTLE WORLD · A SHARED KITCHEN</div>
+      <h1>AFTERGLOW<span>KITCHEN</span></h1>
+      <p>
+        ครัวเล็ก ๆ ของเราสองคน<br>
+        เตรียมให้ทัน ปรุงให้พอดี แล้วส่งต่อความอร่อย
+      </p>
+      <div class="tag">3 WORLDS · 9 SHIFTS · 1–2 CHEFS</div>
+    </div>
+
+    <div class="panel">
+      <h2>คืนนี้เปิดร้านที่ไหนดี?</h2>
+      <div class="small" id="themeDesc"></div>
+
+      <div class="themes">
+        <button class="theme active" data-theme="0"
+          style="--theme-color:#426a4b">
+          <span class="icon">🌿</span>
+          <strong>Forest Table</strong>
+          <span>ป่าริมน้ำ</span>
+        </button>
+        <button class="theme" data-theme="1"
+          style="--theme-color:#705339">
+          <span class="icon">✦</span>
+          <strong>Lumière</strong>
+          <span>ครัวหินอ่อน–ทอง</span>
+        </button>
+        <button class="theme" data-theme="2"
+          style="--theme-color:#634061">
+          <span class="icon">🏮</span>
+          <strong>Night Market</strong>
+          <span>ร้านริมถนน</span>
+        </button>
+      </div>
+
+      <div class="levels" id="levels"></div>
+
+      <div class="fields">
+        <label class="field">จำนวนผู้เล่น
+          <select id="playersSelect">
+            <option value="1">1 คน · เชฟเดี่ยว</option>
+            <option value="2" selected>2 คน · ครัวคู่หู</option>
+          </select>
+        </label>
+
+        <label class="field">ความยาก
+          <select id="difficultySelect">
+            <option value="0">สบาย ๆ</option>
+            <option value="1" selected>เชฟประจำร้าน</option>
+            <option value="2">ชั่วโมงเร่งด่วน</option>
+          </select>
+        </label>
+
+        <label class="field">คุณภาพภาพ
+          <select id="qualitySelect">
+            <option value="auto" selected>อัตโนมัติตามหน้าจอ</option>
+            <option value="high">สูง · เงาคมขึ้น</option>
+            <option value="medium">สมดุล · ลดภาระเครื่อง</option>
+          </select>
+        </label>
+
+        <label class="field">การควบคุม
+          <select id="controlsSelect">
+            <option value="both" selected>แสดงจอยบนจอ</option>
+            <option value="physical">คีย์บอร์ด / Gamepad</option>
+          </select>
+        </label>
+      </div>
+
+      <button class="primary wide" id="startBtn">
+        สวมหมวกเชฟ · เปิดร้าน
+      </button>
+
+      <div class="row" style="margin-top:8px">
+        <button id="menuHelp" style="flex:1;font-size:12px">
+          วิธีเล่นและสูตรอาหาร
+        </button>
+      </div>
+
+      <details class="details">
+        <summary>คีย์บอร์ด จอย และระยะเวลา</summary>
+        <p>
+          P1: WASD เดิน · E หยิบ/ทำ · Space พุ่ง<br>
+          P2: ลูกศรเดิน · Enter หยิบ/ทำ · / พุ่ง<br>
+          Gamepad: ก้านซ้ายเดิน · A หยิบ/ทำ · X พุ่ง<br>
+          จอยตัวแรกควบคุม P1 ตัวที่สองควบคุม P2<br>
+          แต่ละด่าน 2–2:40 นาที · ครบ 9 ด่านประมาณ 21 นาที<br>
+          มือถือปรับกล้องขยายครัวให้อัตโนมัติ · แนะนำแนวนอน
+        </p>
+      </details>
+    </div>
+  </div>
+</div>
+
+<div id="help" class="overlay" hidden>
+  <div class="panel modal">
+    <div class="eyebrow">KITCHEN HANDBOOK</div>
+    <h2 style="margin-top:9px">หยิบ → หั่น → ปรุง → เสิร์ฟ</h2>
+    <p>
+      เดินเข้าใกล้สถานีจนป้ายมีกรอบสีของคุณ แล้วกดปุ่มทำงาน
+      ถือของได้คนละหนึ่งชิ้น
+      ใช้เคาน์เตอร์กลางวางของส่งต่อให้เพื่อนได้
+    </p>
+
+    <table class="recipeTable">
+      <thead>
+        <tr>
+          <th>อาหาร</th>
+          <th>วัตถุดิบที่หั่นแล้ว</th>
+          <th>สถานีสุดท้าย</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>🥗 สลัด</td><td>🍅 + 🍄</td><td>จัดจาน</td></tr>
+        <tr><td>🍲 ซุปเห็ด</td><td>🍅 + 🍄</td><td>เตา</td></tr>
+        <tr><td>🐟 จานปลา</td><td>🍅 + 🐟</td><td>เตา</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      <b>หั่น:</b>
+      ถือวัตถุดิบมาวางบนเขียง แล้วกดปุ่มทำงานค้างไว้จนเต็มหลอด
+      จากนั้นปล่อยและกดอีกครั้งเพื่อหยิบ<br>
+      <b>ปรุง:</b>
+      ใส่วัตถุดิบที่หั่นแล้วทีละชิ้น เตาจะเริ่มเองเมื่อครบสูตร
+      เมื่อพร้อมให้ใช้มือว่างยกอาหารออก อย่าปล่อยจนไหม้<br>
+      <b>เสิร์ฟ:</b>
+      นำอาหารไปเคาน์เตอร์ส่งอาหาร
+      ระบบจับคู่กับออร์เดอร์ที่ใกล้หมดเวลาก่อน<br>
+      <b>แก้พลาด:</b>
+      ทิ้งของที่ถังขยะ เตาที่ไหม้กดล้างด้วยมือว่างได้
+      ถ้าจะเอาวัตถุดิบที่ยังปรุงไม่ครบออก ให้กดสถานีนั้นด้วยมือว่าง
+    </p>
+
+    <p>
+      ด่านแรกของแต่ละธีมเริ่มด้วยสลัดและซุป
+      ด่าน 2–3 เพิ่มจานปลา
+      โหมดคนเดียวหั่นเร็วขึ้นและลูกค้ารอนานขึ้น
+      ผ่านเมื่อส่งครบเป้าภายในเวลาร้านเปิด
+      ดาวเพิ่มเมื่อส่งเกินเป้า
+    </p>
+
+    <button class="primary wide" id="closeHelp">เข้าใจแล้ว</button>
+  </div>
+</div>
+
+<div id="pause" class="overlay" hidden>
+  <div class="panel modal" style="max-width:380px">
+    <div class="eyebrow">TAKE A BREATH</div>
+    <h2 style="margin-top:10px">พักครัวสักครู่</h2>
+    <p>เวลา ออร์เดอร์ และเตาหยุดไว้ทั้งหมดแล้ว</p>
+    <button class="primary wide" id="resumeBtn">กลับเข้าครัว</button>
+    <div class="row" style="margin-top:10px">
+      <button id="pauseHelp">ดูสูตร</button>
+      <button id="restartBtn">เริ่มด่านใหม่</button>
+      <button id="exitBtn">เลือกด่าน</button>
+    </div>
+  </div>
+</div>
+
+<div id="result" class="overlay" hidden>
+  <div class="panel modal" style="max-width:450px;text-align:center">
+    <div class="eyebrow">SERVICE COMPLETE</div>
+    <h2 id="resultTitle" style="margin-top:12px"></h2>
+    <div id="stars"></div>
+    <div id="resultText" class="small"></div>
+    <div class="scoregrid">
+      <div>เสิร์ฟสำเร็จ<b id="resServed"></b></div>
+      <div>คะแนน<b id="resScore"></b></div>
+      <div>ออร์เดอร์หลุด<b id="resMissed"></b></div>
+    </div>
+    <button class="primary wide" id="nextBtn">ด่านถัดไป</button>
+    <div class="row" style="justify-content:center;margin-top:10px">
+      <button id="retryBtn">เล่นอีกครั้ง</button>
+      <button id="resultMenu">เลือกธีม / ด่าน</button>
+    </div>
+  </div>
+</div>
+
+<div id="boot">
+  <div>
+    <div class="loader"></div>
+    <b>กำลังจัดโต๊ะและเปิดไฟในครัว…</b>
+    <p class="small">กำลังโหลดระบบ 3D จากอินเทอร์เน็ต</p>
+  </div>
+</div>
+
+<script type="module">
+async function boot() {
+  const THREE = await import(
+    "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.1/three.module.min.js"
+  );
+
+  const $ = id => document.getElementById(id);
+  const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+  const TAU = Math.PI * 2;
+
+  let state = "menu";
+  let helpReturn = "menu";
+  let themeIndex = 0;
+  let stageIndex = 0;
+  let playerCount = 2;
+  let difficulty = 1;
+  let soundOn = true;
+
+  let scene, camera, worldRoot;
+  let stations = [];
+  let players = [];
+  let water = null;
+
+  let timeLeft = 120;
+  let score = 0;
+  let served = 0;
+  let missed = 0;
+  let combo = 0;
+  let goal = 5;
+
+  let orders = [];
+  let spawnTimer = 0;
+  let orderSerial = 0;
+  let generatedOrders = 0;
+  let uiTimer = 0;
+  let toastTimer = 0;
+  let lastWin = false;
+  let elapsed = 0;
+
+  let resources = [];
+  let seed = 1;
+  let save = {records:{},seen:false};
+
+  try {
+    const data = JSON.parse(
+      localStorage.getItem("afterglow-kitchen-v1") || "null"
+    );
+    if (data && typeof data === "object") {
+      save.records =
+        data.records && typeof data.records === "object"
+          ? data.records : {};
+      save.seen = !!data.seen;
+    }
+  } catch {}
+
+  function persist() {
+    try {
+      localStorage.setItem(
+        "afterglow-kitchen-v1",
+        JSON.stringify(save)
+      );
+    } catch {}
+  }
+
+  function rnd() {
+    seed = (Math.imul(seed,1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  }
+  function range(a,b) { return a + rnd() * (b-a); }
+  function own(value) { resources.push(value);return value; }
+
+  const THEMES = [
+    {
+      name:"FOREST TABLE",
+      thai:"ป่าริมน้ำ",
+      desc:"แสงเย็นลอดใบไม้ เคาน์เตอร์ไม้ และลำธารข้างร้าน",
+      bg:"radial-gradient(ellipse at 48% 30%,#75977b,#244d45 65%,#112e31)",
+      fog:0x638d78,
+      base:0x567359,
+      body:0x7a503a,
+      top:0xe5cda1,
+      accent:0xb8ddb0,
+      sun:0xffe5b4,
+      dishes:{
+        salad:"สลัดสวนป่า",
+        soup:"ซุปเห็ดป่า",
+        fish:"ปลาสมุนไพร"
+      }
+    },
+    {
+      name:"LUMIÈRE",
+      thai:"ครัวหินอ่อน–ทอง",
+      desc:"หินอ่อนสีงาช้าง งานทองเหลือง และโคมระย้าเหนือครัว",
+      bg:"radial-gradient(ellipse at 50% 32%,#726457,#293337 65%,#121e27)",
+      fog:0x645b51,
+      base:0x304b4b,
+      body:0x204a4b,
+      top:0xeee7d8,
+      accent:0xd6b46f,
+      sun:0xffe0ad,
+      dishes:{
+        salad:"การ์เดนสลัด",
+        soup:"ซุปเห็ดครีม",
+        fish:"ปลากระทะ"
+      }
+    },
+    {
+      name:"NIGHT MARKET",
+      thai:"ร้านริมถนน",
+      desc:"ครัวเปิดใต้ผ้าใบ โคมไฟสีอุ่น และถนนหลังฝนตก",
+      bg:"radial-gradient(ellipse at 48% 30%,#495171,#182c43 65%,#101a30)",
+      fog:0x35435c,
+      base:0x293741,
+      body:0x356d75,
+      top:0xc9d5d0,
+      accent:0xfaac73,
+      sun:0xbed9ff,
+      dishes:{
+        salad:"ยำผัก",
+        soup:"ซุปผักเห็ด",
+        fish:"ปลาราดซอส"
+      }
+    }
+  ];
+
+  const ING = {
+    tomato:{name:"มะเขือเทศ",icon:"🍅",color:0xe15b45},
+    mushroom:{name:"เห็ด",icon:"🍄",color:0xd7b386},
+    fish:{name:"ปลา",icon:"🐟",color:0x72b5bd}
+  };
+
+  const RECIPES = {
+    salad:{
+      icon:"🥗",
+      need:["tomato","mushroom"],
+      station:"mix",
+      value:80
+    },
+    soup:{
+      icon:"🍲",
+      need:["tomato","mushroom"],
+      station:"cook",
+      value:110
+    },
+    fish:{
+      icon:"🐟",
+      need:["tomato","fish"],
+      station:"cook",
+      value:130
+    }
+  };
+
+  const dishName = id => THEMES[themeIndex].dishes[id];
+
+  const itemName = item => {
+    if (!item) return "มือว่าง";
+    if (item.kind === "dish") {
+      return RECIPES[item.id].icon + " " + dishName(item.id);
+    }
+    return ING[item.id].icon + " " + ING[item.id].name +
+      (item.kind === "cut" ? " · หั่นแล้ว" : "");
+  };
+
+  const modeKey = () =>
+    `${themeIndex}-${stageIndex}-${playerCount}-${difficulty}`;
+
+  const chopDuration = () =>
+    [1.65,2.15,2.65][difficulty] *
+    (playerCount === 1 ? .73 : 1);
+
+  const cookDuration = () => [5.8,7.4,8.4][difficulty];
+  const burnDuration = () => [24,16,10][difficulty] - stageIndex * .7;
+
+  const allowedDishes = () =>
+    stageIndex === 0
+      ? ["salad","soup"]
+      : ["salad","soup","fish"];
+
+  const renderer = new THREE.WebGLRenderer({
+    antialias:true,
+    alpha:true,
+    powerPreference:"high-performance"
+  });
+
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  $("world").appendChild(renderer.domElement);
+
+  renderer.domElement.addEventListener("webglcontextlost", e => {
+    e.preventDefault();
+    if (state === "play") pauseGame();
+    toast("ระบบภาพถูกพักโดยอุปกรณ์ กรุณารีเฟรชหากภาพไม่กลับมา",8);
+  });
+
+  renderer.domElement.addEventListener("webglcontextrestored", () => {
+    toast("ระบบภาพกลับมาแล้ว หากภาพผิดปกติให้เริ่มด่านใหม่",5);
+  });
+
+  const geomCache = new Map();
+  const matCache = new Map();
+
+  function geo(key,create) {
+    if (!geomCache.has(key)) geomCache.set(key,create());
+    return geomCache.get(key);
+  }
+
+  const G = {
+    box:geo("box",()=>new THREE.BoxGeometry(1,1,1)),
+    sphere:geo("sphere",()=>new THREE.SphereGeometry(1,16,12)),
+    ico:geo("ico",()=>new THREE.IcosahedronGeometry(1,1)),
+    cylinder:geo("cyl",()=>new THREE.CylinderGeometry(1,1,1,20)),
+    cone:geo("cone",()=>new THREE.ConeGeometry(1,1,12)),
+    plane:geo("plane",()=>new THREE.PlaneGeometry(1,1)),
+    crystal:geo("crystal",()=>new THREE.OctahedronGeometry(1))
+  };
+
+  function material(color,metalness=0,roughness=.75,emissive=0) {
+    const key = [color,metalness,roughness,emissive].join("/");
+    if (!matCache.has(key)) {
+      matCache.set(key,new THREE.MeshStandardMaterial({
+        color,
+        metalness,
+        roughness,
+        emissive,
+        emissiveIntensity:.7
+      }));
+    }
+    return matCache.get(key);
+  }
+
+  function mesh(g,m,parent,x=0,y=0,z=0) {
+    const object = new THREE.Mesh(g,m);
+    object.position.set(x,y,z);
+    object.castShadow = true;
+    object.receiveShadow = true;
+    parent.add(object);
+    return object;
+  }
+
+  function box(p,w,h,d,c,x=0,y=0,z=0,metal=0) {
+    const object = mesh(G.box,material(c,metal),p,x,y,z);
+    object.scale.set(w,h,d);
+    return object;
+  }
+
+  function ball(p,x,y,z,sx,sy,sz,c,metal=0) {
+    const object = mesh(G.sphere,material(c,metal),p,x,y,z);
+    object.scale.set(sx,sy,sz);
+    return object;
+  }
+
+  function cyl(p,r,h,c,x=0,y=0,z=0,metal=0) {
+    const object = mesh(G.cylinder,material(c,metal),p,x,y,z);
+    object.scale.set(r,h,r);
+    return object;
+  }
+
+  function cone(p,r,h,c,x,y,z) {
+    const object = mesh(G.cone,material(c),p,x,y,z);
+    object.scale.set(r,h,r);
+    return object;
+  }
+
+  function ring(p,r,t,c,x,y,z,metal=0) {
+    const g = geo(
+      `torus${r}/${t}`,
+      ()=>new THREE.TorusGeometry(r,t,8,32)
+    );
+    const object = mesh(g,material(c,metal),p,x,y,z);
+    object.rotation.x = Math.PI / 2;
+    return object;
+  }
+
+  function rounded(p,w,h,d,c,x=0,y=0,z=0,metal=0) {
+    const key = `round${w}/${h}/${d}`;
+    const g = geo(key,()=>{
+      const r = Math.min(.12,w/5,d/5);
+      const shape = new THREE.Shape();
+
+      shape.moveTo(-w/2+r,-d/2);
+      shape.lineTo(w/2-r,-d/2);
+      shape.quadraticCurveTo(w/2,-d/2,w/2,-d/2+r);
+      shape.lineTo(w/2,d/2-r);
+      shape.quadraticCurveTo(w/2,d/2,w/2-r,d/2);
+      shape.lineTo(-w/2+r,d/2);
+      shape.quadraticCurveTo(-w/2,d/2,-w/2,d/2-r);
+      shape.lineTo(-w/2,-d/2+r);
+      shape.quadraticCurveTo(-w/2,-d/2,-w/2+r,-d/2);
+
+      const geometry = new THREE.ExtrudeGeometry(shape,{
+        depth:h,
+        bevelEnabled:true,
+        bevelSegments:2,
+        steps:1,
+        bevelSize:.035,
+        bevelThickness:.035,
+        curveSegments:4
+      });
+
+      geometry.rotateX(-Math.PI/2);
+      geometry.translate(0,-h/2,0);
+      return geometry;
+    });
+
+    return mesh(g,material(c,metal,.47),p,x,y,z);
+  }
+
+  function glowTexture() {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 64;
+    const ctx = canvas.getContext("2d");
+    const gradient = ctx.createRadialGradient(32,32,0,32,32,32);
+    gradient.addColorStop(0,"rgba(255,255,255,.8)");
+    gradient.addColorStop(.25,"rgba(255,255,255,.25)");
+    gradient.addColorStop(1,"rgba(255,255,255,0)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0,0,64,64);
+    return new THREE.CanvasTexture(canvas);
+  }
+
+  const glowMap = glowTexture();
+
+  function glow(p,x,y,z,size,color,opacity=.38) {
+    const mat = own(new THREE.SpriteMaterial({
+      map:glowMap,
+      color,
+      transparent:true,
+      opacity,
+      depthWrite:false,
+      blending:THREE.AdditiveBlending
+    }));
+
+    const object = new THREE.Sprite(mat);
+    object.position.set(x,y,z);
+    object.scale.setScalar(size);
+    p.add(object);
+    return object;
+  }
+
+  function sign(
+    p,text,x,y,z,
+    color="#f8e5b3",
+    bg="#21413a",
+    w=3.1
+  ) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 768;
+    canvas.height = 192;
+    const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,768,192);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 4;
+    ctx.strokeRect(12,12,744,168);
+    ctx.font = "bold 68px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = color;
+    ctx.fillText(text,384,98,710);
+
+    const texture = own(new THREE.CanvasTexture(canvas));
+    texture.colorSpace = THREE.SRGBColorSpace;
+
+    const mat = own(new THREE.MeshStandardMaterial({
+      map:texture,
+      roughness:.6,
+      emissive:0xffffff,
+      emissiveMap:texture,
+      emissiveIntensity:.22
+    }));
+
+    const object = mesh(G.plane,mat,p,x,y,z);
+    object.scale.set(w,w/4,1);
+    object.castShadow = false;
+    return object;
+  }
+
+  function floorTexture(theme) {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 1024;
+    const ctx = canvas.getContext("2d");
+
+    if (theme === 0) {
+      ctx.fillStyle = "#ac8960";
+      ctx.fillRect(0,0,1024,1024);
+
+      for (let row=0;row<16;row++) {
+        const yy = row*64;
+
+        for (let col=0;col<5;col++) {
+          const xx = col*256-(row%2)*128;
+
+          ctx.fillStyle =
+            `hsl(${32+range(-4,4)},29%,${range(48,61)}%)`;
+          ctx.fillRect(xx+2,yy+2,252,60);
+
+          ctx.strokeStyle = "#50392720";
+          ctx.lineWidth = 1;
+
+          for (let j=0;j<8;j++) {
+            const y = yy+range(7,57);
+            ctx.beginPath();
+            ctx.moveTo(xx+7,y);
+            ctx.bezierCurveTo(
+              xx+80,y+range(-4,4),
+              xx+140,y-3,
+              xx+244,y
+            );
+            ctx.stroke();
+          }
+
+          ctx.fillStyle = "#423d3566";
+
+          for (const px of [xx+9,xx+245]) {
+            ctx.beginPath();
+            ctx.arc(px,yy+9,1.8,0,TAU);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(px,yy+54,1.8,0,TAU);
+            ctx.fill();
+          }
+        }
+      }
+    } else if (theme === 1) {
+      for (let iy=0;iy<8;iy++) {
+        for (let ix=0;ix<8;ix++) {
+          ctx.fillStyle =
+            (ix+iy)%2 ? "#c4c5b7" : "#eee5d0";
+          ctx.fillRect(ix*128,iy*128,128,128);
+          ctx.strokeStyle = "#9b8b6e55";
+          ctx.strokeRect(ix*128,iy*128,128,128);
+        }
+      }
+
+      for (let i=0;i<170;i++) {
+        let px=range(0,1024), py=range(0,1024);
+        ctx.beginPath();
+        ctx.moveTo(px,py);
+
+        for (let j=0;j<8;j++) {
+          px+=range(-8,15);
+          py+=range(2,10);
+          ctx.lineTo(px,py);
+        }
+
+        ctx.strokeStyle = i%3 ? "#69756d18" : "#b89b6630";
+        ctx.lineWidth = range(.6,2.1);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "#b49655";
+      ctx.lineWidth = 5;
+      ctx.strokeRect(29,29,966,966);
+      ctx.lineWidth = 2;
+      ctx.strokeRect(40,40,944,944);
+    } else {
+      ctx.fillStyle = "#536064";
+      ctx.fillRect(0,0,1024,1024);
+
+      for (let i=0;i<12000;i++) {
+        const v = Math.floor(range(75,130));
+        ctx.fillStyle = `rgba(${v},${v+6},${v+9},.35)`;
+        ctx.fillRect(
+          range(0,1024),range(0,1024),
+          range(1,3),range(1,3)
+        );
+      }
+
+      ctx.strokeStyle = "#c3c1a159";
+      ctx.lineWidth = 3;
+
+      for (let i=0;i<9;i++) {
+        ctx.beginPath();
+        ctx.moveTo(0,i*128);
+        ctx.lineTo(1024,i*128);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(i*128,0);
+        ctx.lineTo(i*128,1024);
+        ctx.stroke();
+      }
+
+      for (let i=0;i<13;i++) {
+        ctx.fillStyle = i%2 ? "#ebad7755" : "#78bfc329";
+        ctx.beginPath();
+        ctx.ellipse(
+          range(0,1024),range(0,1024),
+          range(15,70),range(5,23),
+          range(0,3),0,TAU
+        );
+        ctx.fill();
+      }
+    }
+
+    const texture = own(new THREE.CanvasTexture(canvas));
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy =
+      Math.min(renderer.capabilities.getMaxAnisotropy(),8);
+
+    return texture;
+  }
+
+  function createFood(item) {
+    const group = new THREE.Group();
+
+    if (item.kind === "dish") {
+      cyl(group,.34,.045,0xf4ead5,0,.025,0);
+      ring(
+        group,.31,.018,
+        themeIndex===1 ? 0xc6a35c : 0xd5d9c9,
+        0,.052,0,.45
+      );
+
+      if (item.id === "soup") {
+        const bowl = geo(
+          "bowl",
+          ()=>new THREE.CylinderGeometry(.27,.18,.18,20)
+        );
+
+        mesh(bowl,material(0xeee5ca),group,0,.13,0);
+        cyl(group,.247,.02,0xe9a457,0,.23,0);
+
+        for (let i=0;i<5;i++) {
+          ball(
+            group,
+            Math.cos(i*2)*.12,.248,Math.sin(i*2)*.12,
+            .035,.015,.035,
+            i%2 ? 0x638b52 : 0xd3b38b
+          );
+        }
+      } else if (item.id === "salad") {
+        for (let i=0;i<8;i++) {
+          const a=i*2.4, r=.11+(i%2)*.08;
+          const leaf = ball(
+            group,
+            Math.cos(a)*r,.095+(i%3)*.03,Math.sin(a)*r,
+            .13,.035,.085,
+            i%2 ? 0x599654 : 0x86b967
+          );
+          leaf.rotation.y = a;
+        }
+
+        ball(group,.11,.18,.02,.075,.065,.075,0xdf674a);
+        ball(group,-.1,.16,.08,.07,.06,.07,0xe58c4f);
+      } else {
+        ball(group,0,.085,0,.21,.045,.22,0xe6d9af);
+        ball(group,0,.145,0,.12,.065,.23,0xdba967);
+
+        for (let i=0;i<3;i++) {
+          box(group,.15,.015,.014,0x9a7545,0,.206,-.1+i*.075);
+        }
+
+        ball(group,.2,.1,.06,.05,.04,.08,0x79a554);
+        cyl(group,.055,.02,0xf1d171,-.18,.1,0);
+      }
+    } else if (item.kind === "cut") {
+      cyl(group,.24,.025,0xe8d7b0,0,.015,0);
+
+      for (let i=0;i<6;i++) {
+        const a=i*2.4, r=i%2 ? .13 : .07;
+        const piece = box(
+          group,.09,.07,.08,ING[item.id].color,
+          Math.cos(a)*r,
+          .07+(i%2)*.015,
+          Math.sin(a)*r
+        );
+        piece.rotation.y = a;
+      }
+    } else if (item.id === "tomato") {
+      ball(group,0,.18,0,.19,.17,.19,0xe65f43);
+      cyl(group,.025,.08,0x56814c,0,.36,0);
+
+      for (let i=0;i<5;i++) {
+        const a=i*TAU/5;
+        const leaf = ball(
+          group,
+          Math.cos(a)*.065,.325,Math.sin(a)*.065,
+          .085,.014,.025,0x587d3c
+        );
+        leaf.rotation.y = -a;
+      }
+    } else if (item.id === "mushroom") {
+      cyl(group,.067,.2,0xe4d4ad,0,.11,0);
+      ball(group,0,.23,0,.22,.12,.22,0xb69571);
+
+      for (let i=0;i<3;i++) {
+        ball(
+          group,
+          Math.cos(i*2)*.095,.325,Math.sin(i*2)*.07,
+          .026,.008,.03,0xe6d8b7
+        );
+      }
+    } else {
+      ball(group,0,.15,0,.14,.105,.28,0x7fbdc0,.2);
+      const tail=cone(group,.15,.18,0x50979f,0,.15,-.3);
+      tail.rotation.x = -Math.PI/2;
+      tail.scale.z *= .4;
+
+      ball(group,.09,.185,.16,.019,.019,.019,0x19363b);
+      box(group,.016,.11,.14,0x49848b,0,.25,-.035);
+    }
+
+    return group;
+  }
+
+  function makeChef(index) {
+    const color = index===0 ? 0x66d8c3 : 0xf2a17c;
+    const root = new THREE.Group();
+    const body = new THREE.Group();
+
+    root.add(body);
+    worldRoot.add(root);
+    ring(root,.41,.035,color,0,.045,0);
+
+    const shadowMat = own(new THREE.MeshBasicMaterial({
+      map:glowMap,
+      color:0x112824,
+      transparent:true,
+      opacity:.48,
+      depthWrite:false
+    }));
+
+    const shadow = mesh(G.plane,shadowMat,root,0,.025,0);
+    shadow.scale.set(1.25,1.25,1);
+    shadow.rotation.x = -Math.PI/2;
+    shadow.castShadow = false;
+
+    const legs = [];
+
+    for (const side of [-1,1]) {
+      const leg = new THREE.Group();
+      leg.position.set(side*.135,.29,0);
+      body.add(leg);
+
+      cyl(leg,.085,.26,0x263d43,0,-.08,0);
+      ball(leg,0,-.22,.055,.105,.075,.16,0x172b32);
+      legs.push(leg);
+    }
+
+    ball(body,0,.53,0,.29,.32,.21,0xf0eade);
+    rounded(body,.38,.38,.075,color,0,.5,.205);
+    box(body,.035,.31,.025,color,-.13,.74,.2);
+    box(body,.035,.31,.025,color,.13,.74,.2);
+
+    const skin = index===0 ? 0xe3b18c : 0xb98263;
+
+    ball(body,0,.94,0,.235,.25,.225,skin);
+    ball(body,-.08,.98,.207,.022,.031,.012,0x203439);
+    ball(body,.08,.98,.207,.022,.031,.012,0x203439);
+    ball(body,0,.9,.23,.04,.032,.035,skin);
+
+    const arms = [];
+
+    for (const side of [-1,1]) {
+      const arm = new THREE.Group();
+      arm.position.set(side*.28,.7,0);
+      body.add(arm);
+
+      ball(arm,side*.018,-.1,0,.105,.18,.105,0xefe9dc);
+      ball(arm,side*.023,-.24,.025,.083,.087,.083,skin);
+      arms.push(arm);
+    }
+
+    cyl(body,.245,.105,0xfff8e8,0,1.17,0);
+
+    for (const [x,z,s] of [
+      [-.12,0,.17],[.12,0,.17],[0,-.07,.19],[0,.085,.17]
+    ]) {
+      ball(body,x,1.3,z,s,.16,s,0xfff9ea);
+    }
+
+    const carry = new THREE.Group();
+    carry.position.set(0,.69,.53);
+    body.add(carry);
+
+    root.position.set(index===0 ? -1.25 : 1.25,0,2.15);
+
+    return {
+      root,body,legs,arms,carry,index,
+      hand:null,
+      near:null,
+      prevAction:false,
+      prevDash:false,
+      dashTime:0,
+      dashCd:0,
+      walk:0,
+      moving:0
+    };
+  }
+
+  function setHand(player,item) {
+    player.hand = item;
+    player.carry.clear();
+
+    if (item) {
+      const food = createFood(item);
+      food.scale.setScalar(.9);
+      player.carry.add(food);
+    }
+  }
+
+  function station(type,x,z,extra={}) {
+    const theme = THEMES[themeIndex];
+
+    const s = {
+      type,x,z,
+      w:type==="serve" ? 2.75 : 1.64,
+      d:1.48,
+      item:null,
+      ingredients:[],
+      phase:"idle",
+      progress:0,
+      timer:0,
+      working:false,
+      soundTick:0,
+      ...extra
+    };
+
+    const group = new THREE.Group();
+    group.position.set(x,0,z);
+    worldRoot.add(group);
+    s.root = group;
+
+    const haloMat = own(new THREE.MeshBasicMaterial({
+      color:0x66e3ce,
+      transparent:true,
+      opacity:.5
+    }));
+
+    s.halo = mesh(G.box,haloMat,group,0,.028,0);
+    s.halo.scale.set(s.w+.15,.035,s.d+.15);
+    s.halo.visible = false;
+    s.halo.castShadow = false;
+
+    rounded(
+      group,s.w,.85,s.d,theme.body,
+      0,.48,0,themeIndex===2 ? .3 : 0
+    );
+    rounded(
+      group,s.w+.09,.15,s.d+.07,theme.top,
+      0,.98,0,themeIndex===2 ? .5 : 0
+    );
+
+    box(
+      group,s.w-.15,.035,.025,theme.accent,
+      0,.65,s.d/2+.025,.45
+    );
+
+    for (const dx of [-s.w*.35,s.w*.35]) {
+      cyl(group,.045,.17,0x414c43,dx,.09,0,.5);
+    }
+
+    if (themeIndex===1) {
+      box(
+        group,.035,.64,.025,theme.accent,
+        -s.w/2+.1,.5,s.d/2+.025,.65
+      );
+      box(
+        group,.035,.64,.025,theme.accent,
+        s.w/2-.1,.5,s.d/2+.025,.65
+      );
+    }
+
+    s.payload = new THREE.Group();
+    s.payload.position.y = 1.1;
+    group.add(s.payload);
+
+    if (type==="crate") {
+      rounded(group,1.2,.2,1.05,0x94704b,0,1.14,0);
+      box(group,1.22,.18,.055,0xb58d5d,0,1.29,.5);
+      box(group,1.22,.18,.055,0xb58d5d,0,1.29,-.5);
+      box(group,.055,.18,1,0xb58d5d,-.6,1.29,0);
+      box(group,.055,.18,1,0xb58d5d,.6,1.29,0);
+
+      for (let i=0;i<4;i++) {
+        const food = createFood({kind:"raw",id:s.ingredient});
+        food.position.set(
+          (i%2-.5)*.47,1.23,(Math.floor(i/2)-.5)*.43
+        );
+        food.rotation.y = i*.7;
+        food.scale.setScalar(.8);
+        group.add(food);
+      }
+    }
+
+    if (type==="prep") {
+      rounded(group,1.05,.055,.8,0xc09258,0,1.105,0);
+
+      s.knife = new THREE.Group();
+      s.knife.position.set(.28,1.22,0);
+      group.add(s.knife);
+
+      box(s.knife,.38,.16,.025,0xc7dedb,-.07,0,0,.8);
+      box(s.knife,.21,.055,.065,0x384d48,.23,.025,0);
+      s.payload.position.set(-.16,1.155,0);
+    }
+
+    if (type==="cook") {
+      rounded(group,1.2,.065,1.08,0x293941,0,1.08,0,.5);
+      ring(group,.39,.043,0x787f7b,0,1.145,0,.7);
+      cyl(group,.38,.24,0x344b4e,0,1.27,0,.65);
+      ring(group,.38,.026,0xc4d2c7,0,1.395,0,.8);
+
+      for (const dx of [-.5,.5]) {
+        box(group,.23,.055,.115,0x243a3c,dx,1.34,0);
+      }
+
+      const indicatorMat = own(
+        new THREE.MeshBasicMaterial({color:0x73816b})
+      );
+
+      s.ind = mesh(G.sphere,indicatorMat,group,.45,1.13,.4);
+      s.ind.scale.setScalar(.06);
+      s.steam = [];
+
+      for (let i=0;i<3;i++) {
+        const steamMat = own(new THREE.MeshBasicMaterial({
+          color:0xe7f7eb,
+          transparent:true,
+          opacity:.17,
+          depthWrite:false
+        }));
+
+        const puff = mesh(G.sphere,steamMat,group,0,1.5,0);
+        puff.castShadow = false;
+        puff.scale.setScalar(.13);
+        puff.visible = false;
+        s.steam.push(puff);
+      }
+
+      s.payload.position.y = 1.41;
+    }
+
+    if (type==="mix") {
+      cyl(group,.48,.05,0xf3ecdb,0,1.11,0);
+      ring(group,.45,.026,theme.accent,0,1.15,0,.4);
+      cyl(group,.2,.08,0xede2c5,-.55,1.15,-.46);
+    }
+
+    if (type==="serve") {
+      for (const dx of [-1,1]) {
+        cyl(group,.025,.88,theme.accent,dx,1.53,-.46,.65);
+        const shade = cone(
+          group,.25,.2,theme.accent,dx,1.98,-.46
+        );
+        shade.rotation.x = Math.PI;
+        glow(group,dx,1.83,-.46,.85,0xffda89,.25);
+      }
+
+      rounded(group,1.65,.035,.65,0x687e6f,0,1.09,.12);
+      cyl(group,.11,.07,0xc8ab68,.88,1.12,.4,.65);
+      ball(group,.88,1.17,.4,.07,.045,.07,0xdec284,.7);
+    }
+
+    if (type==="trash") {
+      rounded(group,1.12,.055,.97,0x324347,0,1.105,0,.5);
+      rounded(group,.77,.02,.61,0x142c32,0,1.145,0);
+    }
+
+    if (type==="counter") {
+      box(group,.23,.055,.14,0x66827a,-.54,1.1,-.48);
+      cyl(group,.06,.13,0xe1d5b5,-.54,1.18,-.48);
+    }
+
+    s.el = document.createElement("div");
+    s.el.className = "stationLabel";
+    $("labels").appendChild(s.el);
+
+    stations.push(s);
+    syncStation(s);
+    return s;
+  }
+
+  function syncStation(s) {
+    s.payload.clear();
+
+    if (s.item) s.payload.add(createFood(s.item));
+
+    if (s.type==="cook" || s.type==="mix") {
+      if (s.phase==="ready") {
+        s.payload.add(createFood({kind:"dish",id:s.recipe}));
+      } else if (s.phase==="burnt") {
+        for (let i=0;i<4;i++) {
+          ball(
+            s.payload,
+            (i%2-.5)*.22,.035,(Math.floor(i/2)-.5)*.2,
+            .12,.06,.1,0x423c32
+          );
+        }
+      } else {
+        s.ingredients.forEach((id,i)=>{
+          const food = createFood({kind:"cut",id});
+          food.scale.setScalar(.65);
+          food.position.x = (i-.5)*.38;
+          s.payload.add(food);
+        });
+      }
+    }
+  }
+
+  function resetStation(s) {
+    s.item = null;
+    s.ingredients = [];
+    s.phase = "idle";
+    s.recipe = null;
+    s.timer = 0;
+    s.progress = 0;
+    syncStation(s);
+  }
+
+  function addPlant(parent,x,z,size=1,pot=false) {
+    const group = new THREE.Group();
+    group.position.set(x,0,z);
+    group.scale.setScalar(size);
+    parent.add(group);
+
+    if (pot) {
+      cyl(
+        group,.28,.42,
+        themeIndex===1 ? 0xb69a61 : 0x9c6f4e,
+        0,.22,0,.2
+      );
+    }
+
+    const base = pot ? .4 : 0;
+
+    for (let i=0;i<7;i++) {
+      const a = i*2.4;
+      const leaf = ball(
+        group,
+        Math.cos(a)*.19,
+        base+.27+(i%3)*.12,
+        Math.sin(a)*.19,
+        .095,.38,.065,
+        i%2 ? 0x659b67 : 0x386c51
+      );
+      leaf.rotation.z = Math.cos(a)*.5;
+      leaf.rotation.x = Math.sin(a)*.5;
+    }
+  }
+
+  function tree(x,z,height,color) {
+    const group = new THREE.Group();
+    group.position.set(x,-.3,z);
+    worldRoot.add(group);
+
+    cyl(group,.19,height*.7,0x78624b,0,height*.35,0);
+
+    for (let i=0;i<5;i++) {
+      const a = i*2.4;
+      const foliage = mesh(
+        G.ico,
+        material(i%2 ? color : 0x6a9469),
+        group,
+        Math.cos(a)*.65,
+        height*.72+(i%3)*.4,
+        Math.sin(a)*.6
+      );
+      foliage.scale.set(1.2,1.1,1.05);
+      foliage.rotation.y = a;
+    }
+
+    addPlant(group,.45,0,.9);
+  }
+
+  function cable(z,y) {
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-7,y,z),
+      new THREE.Vector3(-3,y-.6,z),
+      new THREE.Vector3(3,y-.6,z),
+      new THREE.Vector3(7,y,z)
+    ]);
+
+    mesh(
+      own(new THREE.TubeGeometry(curve,32,.018,5,false)),
+      material(0x48564c),
+      worldRoot
+    );
+
+    for (let i=0;i<12;i++) {
+      const v = curve.getPoint((i+.5)/12);
+
+      cyl(worldRoot,.023,.13,0x514c3d,v.x,v.y-.065,v.z);
+
+      const bulb = mesh(
+        G.sphere,
+        material(0xffe5ab,0,.3,0xffc56b),
+        worldRoot,v.x,v.y-.18,v.z
+      );
+      bulb.scale.set(.065,.09,.065);
+      bulb.castShadow = false;
+
+      glow(worldRoot,v.x,v.y-.18,v.z,.72,0xffcb78,.28);
+    }
+  }
+
+  function buildDecor() {
+    const theme = THEMES[themeIndex];
+
+    rounded(worldRoot,14.7,.65,11.7,theme.base,0,-.4,0);
+    rounded(
+      worldRoot,14.45,.13,11.45,
+      themeIndex===0 ? 0x81694b : theme.accent,
+      0,-.045,0
+    );
+
+    const floorMat = own(new THREE.MeshStandardMaterial({
+      map:floorTexture(themeIndex),
+      roughness:themeIndex===0 ? .85 : .35,
+      metalness:themeIndex===2 ? .25 : .06
+    }));
+
+    const floor = mesh(G.plane,floorMat,worldRoot,0,.028,0);
+    floor.rotation.x = -Math.PI/2;
+    floor.scale.set(14.35,11.35,1);
+    floor.castShadow = false;
+
+    if (themeIndex===0) {
+      for (const [x,z,h,c] of [
+        [-7.3,-5.7,3.7,0x4b805b],
+        [-4.4,-6.5,4.6,0x668e58],
+        [0,-6.8,4.3,0x5f946c],
+        [5.4,-6.5,4.8,0x477a5b],
+        [-8,2.7,3.2,0x789956]
+      ]) {
+        tree(x,z,h,c);
+      }
+
+      for (let i=0;i<14;i++) {
+        const x = i<7 ? -7.25 : 7.3;
+        const z = -4.9+(i%7)*1.6;
+
+        addPlant(worldRoot,x,z,range(.5,.9));
+
+        const rock = mesh(
+          G.ico,
+          material(i%2 ? 0x8d9c84 : 0x758e7d),
+          worldRoot,x,-.1,z+.3
+        );
+        rock.scale.set(
+          range(.2,.4),range(.16,.3),range(.2,.4)
+        );
+      }
+
+      const waterGeo = own(
+        new THREE.PlaneGeometry(2.5,14,12,44)
+      );
+      waterGeo.rotateX(-Math.PI/2);
+
+      const waterMat = own(new THREE.MeshPhysicalMaterial({
+        color:0x68b9b2,
+        metalness:.12,
+        roughness:.17,
+        transparent:true,
+        opacity:.84,
+        clearcoat:1
+      }));
+
+      water = mesh(waterGeo,waterMat,worldRoot,8.65,-.47,0);
+      water.castShadow = false;
+      water.userData.base =
+        waterGeo.attributes.position.array.slice();
+
+      for (let i=0;i<7;i++) {
+        const rock = mesh(
+          G.ico,material(0x7b9183),
+          worldRoot,7.45,-.26,-6+i*2
+        );
+        rock.scale.set(.45,.3,.64);
+      }
+
+      for (const x of [-6.8,6.8]) {
+        cyl(worldRoot,.065,4.35,0x6a5a43,x,2.05,-4.9);
+      }
+
+      cable(-4.9,4.25);
+      sign(
+        worldRoot,"FOREST TABLE",-.8,3.6,-5.9,
+        "#f3e4bb","#34533e",3.6
+      );
+
+      for (const x of [-6.8,6.8]) {
+        addPlant(worldRoot,x,4.8,.85,true);
+      }
+    } else if (themeIndex===1) {
+      rounded(worldRoot,14.5,3.4,.28,0x244345,0,1.65,-5.66);
+      box(worldRoot,14.5,.15,.34,theme.accent,0,3.35,-5.62,.65);
+
+      for (const x of [-5.3,-2.65,0,2.65,5.3]) {
+        rounded(
+          worldRoot,1.95,2.3,.055,0x49605a,
+          x,1.77,-5.47,.18
+        );
+
+        const archGeo = geo(
+          "arch",
+          ()=>new THREE.TorusGeometry(.85,.035,8,32,Math.PI)
+        );
+
+        mesh(
+          archGeo,material(theme.accent,.75,.35),
+          worldRoot,x,2.22,-5.38
+        );
+
+        box(
+          worldRoot,.06,1.85,.07,theme.accent,
+          x-.85,1.3,-5.39,.7
+        );
+        box(
+          worldRoot,.06,1.85,.07,theme.accent,
+          x+.85,1.3,-5.39,.7
+        );
+      }
+
+      for (const x of [-6.95,6.95]) {
+        cyl(worldRoot,.24,3.8,0xe6dfc9,x,1.86,-4.75);
+        cyl(worldRoot,.38,.18,theme.accent,x,.15,-4.75,.7);
+        cyl(worldRoot,.36,.2,theme.accent,x,3.71,-4.75,.7);
+        addPlant(worldRoot,x,3.9,1.15,true);
+      }
+
+      const chandelier = new THREE.Group();
+      chandelier.position.set(0,4.25,-2.8);
+      worldRoot.add(chandelier);
+
+      cyl(chandelier,.045,1.5,theme.accent,0,.82,0,.8);
+      ring(chandelier,1.25,.04,theme.accent,0,0,0,.8);
+      ring(chandelier,.68,.035,theme.accent,0,.3,0,.8);
+
+      for (let i=0;i<12;i++) {
+        const a=i*TAU/12;
+        const x=Math.cos(a)*1.23;
+        const z=Math.sin(a)*1.23;
+
+        cyl(chandelier,.012,.36,theme.accent,x,-.18,z,.65);
+
+        const crystal = mesh(
+          G.crystal,
+          material(0xf0e5be,.2,.12,0x60451e),
+          chandelier,x,-.43,z
+        );
+        crystal.scale.set(.075,.19,.075);
+        glow(chandelier,x,-.33,z,.45,0xffce75,.3);
+      }
+
+      const lamp = new THREE.PointLight(0xffd992,26,13,2);
+      lamp.position.set(0,3.7,-2);
+      worldRoot.add(lamp);
+
+      sign(
+        worldRoot,"L U M I È R E",0,2.45,-5.28,
+        "#edd5a0","#284447",3.7
+      );
+
+      for (let i=0;i<5;i++) {
+        box(
+          worldRoot,2.1,.035,.12,theme.accent,
+          -5.6+i*2.8,.065,5.1,.65
+        );
+      }
+    } else {
+      rounded(worldRoot,15.7,.22,13.2,0x27333f,0,-.66,0);
+
+      for (let i=0;i<10;i++) {
+        box(
+          worldRoot,.7,.022,.1,0xdcc298,
+          -6.8+i*1.5,-.535,6.15
+        );
+      }
+
+      rounded(worldRoot,14.25,2.3,.22,0x284957,0,1.13,-5.61,.25);
+
+      for (let i=0;i<16;i++) {
+        box(
+          worldRoot,.035,2.18,.06,0x396270,
+          -6.7+i*.89,1.15,-5.43,.3
+        );
+      }
+
+      for (const x of [-6.8,6.8]) {
+        cyl(worldRoot,.055,3.4,0x4b6470,x,1.68,-4.15,.6);
+      }
+
+      for (let i=0;i<16;i++) {
+        const color = i%2 ? 0xe5ceb0 : 0xb96f55;
+        const awning = box(
+          worldRoot,.88,.07,2.15,color,
+          -6.6+i*.88,3.35,-5.1
+        );
+        awning.rotation.x = .12;
+
+        box(
+          worldRoot,.88,.27,.06,color,
+          -6.6+i*.88,3.13,-4.06
+        );
+      }
+
+      sign(
+        worldRoot,"ครัวริมทาง",-.8,2.24,-5.4,
+        "#ffe9b4","#754746",3.1
+      );
+      sign(
+        worldRoot,"OPEN",4.6,2.15,-5.36,
+        "#88ffe6","#255759",1.4
+      );
+
+      for (const x of [-5.7,-3.2,2,5.7]) {
+        cyl(worldRoot,.015,.55,0x4e504a,x,2.82,-3.98);
+
+        const lantern = ball(
+          worldRoot,x,2.41,-3.98,
+          .24,.32,.24,0xf0a36f
+        );
+        lantern.material = material(0xf0a36f,0,.6,0xad4c28);
+
+        ring(worldRoot,.19,.02,0x734a3b,x,2.18,-3.98);
+        glow(worldRoot,x,2.4,-3.98,1.4,0xff9e69,.38);
+      }
+
+      const pink = new THREE.PointLight(0xff9a8e,25,15,2);
+      pink.position.set(-5,3,1);
+      worldRoot.add(pink);
+
+      const blue = new THREE.PointLight(0x70e3df,26,15,2);
+      blue.position.set(6,3,-1);
+      worldRoot.add(blue);
+
+      for (let i=0;i<3;i++) {
+        const x=-7.55, z=1.4+i*1.12;
+
+        cyl(
+          worldRoot,.35,.07,
+          i%2 ? 0xcb8564 : 0x6b9c9b,
+          x,.58,z
+        );
+
+        for (const dx of [-.2,.2]) {
+          box(worldRoot,.05,.52,.05,0x85908a,x+dx,.27,z,.6);
+        }
+      }
+
+      const cart = new THREE.Group();
+      cart.position.set(8.1,0,2.9);
+      worldRoot.add(cart);
+
+      rounded(cart,1.2,.65,1.45,0x739b99,0,.6,0,.3);
+
+      for (const z of [-.5,.5]) {
+        const wheel = cyl(cart,.28,.13,0x22313b,0,.21,z);
+        wheel.rotation.z = Math.PI/2;
+      }
+
+      box(cart,1.3,.07,1.65,0xdbb381,0,.96,0);
+      addPlant(worldRoot,-6.9,4.75,.8,true);
+      addPlant(worldRoot,6.85,4.8,.6,true);
+    }
+
+    createAmbient();
+  }
+
+  let ambientGeo,ambientPos,ambientBase;
+
+  function createAmbient() {
+    const count = themeIndex===0 ? 85 : themeIndex===1 ? 45 : 125;
+
+    ambientPos = new Float32Array(count*3);
+    ambientBase = [];
+
+    for (let i=0;i<count;i++) {
+      const particle = {
+        x:range(-10,10),
+        y:range(.3,7),
+        z:range(-8,7),
+        speed:range(.2,.7),
+        phase:range(0,TAU)
+      };
+      ambientBase.push(particle);
+      ambientPos.set([particle.x,particle.y,particle.z],i*3);
+    }
+
+    ambientGeo = own(new THREE.BufferGeometry());
+    ambientGeo.setAttribute(
+      "position",
+      new THREE.BufferAttribute(ambientPos,3)
+    );
+
+    const mat = own(new THREE.PointsMaterial({
+      color:themeIndex===0 ? 0xf9e5a2 : themeIndex===1 ? 0xe6c98a : 0x99c9e3,
+      size:themeIndex===0 ? .075 : .045,
+      map:glowMap,
+      transparent:true,
+      opacity:themeIndex===2 ? .3 : .62,
+      depthWrite:false,
+      blending:THREE.AdditiveBlending
+    }));
+
+    worldRoot.add(new THREE.Points(ambientGeo,mat));
+  }
+
+  let fxGeo,fxPos,fxColor;
+  let fx = [];
+
+  function initFX() {
+    fxPos = new Float32Array(90*3);
+    fxColor = new Float32Array(90*3);
+    fxPos.fill(999);
+
+    fxGeo = own(new THREE.BufferGeometry());
+    fxGeo.setAttribute("position",new THREE.BufferAttribute(fxPos,3));
+    fxGeo.setAttribute("color",new THREE.BufferAttribute(fxColor,3));
+
+    const mat = own(new THREE.PointsMaterial({
+      size:.13,
+      map:glowMap,
+      vertexColors:true,
+      transparent:true,
+      depthWrite:false,
+      blending:THREE.AdditiveBlending
+    }));
+
+    const particles = new THREE.Points(fxGeo,mat);
+    particles.frustumCulled = false;
+    worldRoot.add(particles);
+    fx = [];
+  }
+
+  function burst(x,y,z,color,count=15) {
+    const c = new THREE.Color(color);
+
+    for (let i=0;i<count;i++) {
+      if (fx.length>=90) fx.shift();
+
+      fx.push({
+        x,y,z,
+        vx:range(-1.5,1.5),
+        vy:range(1.4,3.2),
+        vz:range(-1.5,1.5),
+        life:range(.4,.9),
+        c
+      });
+    }
+  }
+
+  function visualUpdate(dt,t) {
+    if (ambientGeo) {
+      ambientBase.forEach((p,i)=>{
+        ambientPos[i*3] =
+          p.x+Math.sin(t*.35+p.phase)*.3;
+
+        ambientPos[i*3+1] = themeIndex===2
+          ? 7-((t*p.speed*4+p.y)%7)
+          : p.y+Math.sin(t*p.speed+p.phase)*.18;
+
+        ambientPos[i*3+2] = p.z;
+      });
+
+      ambientGeo.attributes.position.needsUpdate = true;
+    }
+
+    if (water) {
+      const a = water.geometry.attributes.position.array;
+      const base = water.userData.base;
+
+      for (let i=0;i<a.length;i+=3) {
+        a[i+1] =
+          base[i+1]+Math.sin(base[i]*3+t*1.2+base[i+2])*.045;
+      }
+
+      water.geometry.attributes.position.needsUpdate = true;
+      water.geometry.computeVertexNormals();
+    }
+
+    for (const s of stations) {
+      if (s.knife) {
+        s.knife.position.y = s.working
+          ? 1.23+Math.abs(Math.sin(t*19))*.19
+          : 1.24;
+
+        s.knife.rotation.z = s.working
+          ? -.08+Math.sin(t*19)*.1
+          : -.14;
+      }
+
+      if (s.steam) {
+        const on = ["cooking","ready","burnt"].includes(s.phase);
+
+        s.ind.material.color.setHex(
+          s.phase==="ready" ? 0x8ae2ac :
+          s.phase==="burnt" ? 0xfa805f :
+          s.phase==="cooking" ? 0xf3bc68 : 0x73816b
+        );
+
+        s.steam.forEach((puff,i)=>{
+          puff.visible = on;
+          const f = (t*.55+i/3)%1;
+
+          puff.position.set(
+            Math.sin(t+i*2)*.12,
+            1.55+f*.75,
+            Math.cos(t*.7+i)*.12
+          );
+          puff.scale.setScalar(.08+f*.15);
+          puff.material.opacity =
+            (1-f)*(s.phase==="burnt" ? .28 : .15);
+          puff.material.color.setHex(
+            s.phase==="burnt" ? 0x594d47 : 0xecf5de
+          );
+        });
+      }
+    }
+
+    for (let i=fx.length-1;i>=0;i--) {
+      const p = fx[i];
+      p.life -= dt;
+
+      if (p.life<=0) {
+        fx.splice(i,1);
+        continue;
+      }
+
+      p.x += p.vx*dt;
+      p.y += p.vy*dt;
+      p.z += p.vz*dt;
+      p.vy -= 5*dt;
+    }
+
+    fxPos.fill(999);
+
+    fx.forEach((p,i)=>{
+      fxPos.set([p.x,p.y,p.z],i*3);
+      fxColor.set([p.c.r,p.c.g,p.c.b],i*3);
+    });
+
+    fxGeo.attributes.position.needsUpdate = true;
+    fxGeo.attributes.color.needsUpdate = true;
+  }
+
+  function highQuality() {
+    const value = $("qualitySelect").value;
+    return value==="high" ||
+      (value==="auto" && Math.min(innerWidth,innerHeight)>540);
+  }
+
+  /* ======================================
+     กล้องใหม่: ขยายครัวสำหรับมือถือ
+     ====================================== */
+  function resize() {
+    if (!camera) return;
+
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const aspect = w/h;
+    const landscape = w>h;
+
+    const compact = Math.min(w,h)<=600;
+    const touchDevice =
+      window.matchMedia("(pointer: coarse)").matches;
+    const tablet = !compact && touchDevice;
+
+    renderer.setPixelRatio(
+      Math.min(
+        window.devicePixelRatio || 1,
+        highQuality() ? 1.8 : 1.25
+      )
+    );
+    renderer.setSize(w,h);
+
+    let viewHeight;
+    let verticalOffset;
+
+    if (compact) {
+      if (landscape) {
+        camera.position.set(5,21,21);
+        viewHeight = Math.max(12.8,17.2/aspect);
+        verticalOffset = .62;
+      } else {
+        camera.position.set(0,23,20);
+        viewHeight = Math.max(15,17.2/aspect);
+        verticalOffset = .54;
+      }
+    } else if (tablet) {
+      camera.position.set(7,20,21);
+      viewHeight = Math.max(14.6,20/aspect);
+      verticalOffset = landscape ? .58 : .54;
+    } else {
+      camera.position.set(9.5,18,20);
+      viewHeight = Math.max(17.3,23.6/aspect);
+      verticalOffset = .54;
+    }
+
+    camera.lookAt(0,.35,0);
+
+    const viewWidth = viewHeight*aspect;
+
+    camera.left = -viewWidth/2;
+    camera.right = viewWidth/2;
+    camera.top = viewHeight*verticalOffset;
+    camera.bottom = -viewHeight*(1-verticalOffset);
+
+    camera.updateProjectionMatrix();
+    camera.updateMatrixWorld(true);
+  }
+
+  window.addEventListener("resize",resize);
+  window.visualViewport?.addEventListener("resize",resize);
+
+  function buildWorld() {
+    $("labels").innerHTML = "";
+
+    for (const resource of resources) resource.dispose?.();
+
+    resources = [];
+    stations = [];
+    players = [];
+    water = null;
+    seed = 1997+themeIndex*891+stageIndex*13;
+
+    scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(THEMES[themeIndex].fog,33,65);
+
+    worldRoot = new THREE.Group();
+    scene.add(worldRoot);
+
+    camera = new THREE.OrthographicCamera(-12,12,9,-9,.1,100);
+
+    renderer.toneMappingExposure =
+      themeIndex===0 ? 1.18 : themeIndex===1 ? 1.13 : 1.05;
+
+    $("world").style.background = THEMES[themeIndex].bg;
+
+    const hemi = new THREE.HemisphereLight(
+      themeIndex===2 ? 0xb2d5fa : 0xf6f1d5,
+      0x355c56,
+      2.2
+    );
+    scene.add(hemi);
+
+    const sun = new THREE.DirectionalLight(
+      THEMES[themeIndex].sun,
+      themeIndex===2 ? 2 : 3.3
+    );
+
+    sun.position.set(-7,15,8);
+    sun.castShadow = true;
+    sun.shadow.mapSize.setScalar(highQuality() ? 2048 : 1024);
+    sun.shadow.camera.left = -13;
+    sun.shadow.camera.right = 13;
+    sun.shadow.camera.top = 13;
+    sun.shadow.camera.bottom = -13;
+    sun.shadow.camera.near = .5;
+    sun.shadow.camera.far = 45;
+    sun.shadow.bias = -.0003;
+    sun.shadow.normalBias = .035;
+    scene.add(sun);
+
+    resources.push({
+      dispose() {
+        sun.shadow.map?.dispose();
+      }
+    });
+
+    const rim = new THREE.DirectionalLight(
+      themeIndex===2 ? 0xd7a0b8 : 0xcce4db,
+      1.3
+    );
+    rim.position.set(8,9,-8);
+    scene.add(rim);
+
+    buildDecor();
+
+    station("crate",-5.55,-3.72,{ingredient:"tomato"});
+    station("crate",-3.65,-3.72,{ingredient:"mushroom"});
+    station("crate",-1.75,-3.72,{ingredient:"fish"});
+
+    station("prep",.72,-3.72);
+    station("prep",2.64,-3.72);
+
+    station("cook",5.5,-2.7);
+    station("cook",5.5,-.55);
+
+    station("mix",-5.5,-.7);
+    station("serve",-2.5,3.78);
+    station("trash",5.5,3.78);
+
+    if (themeIndex===2) {
+      station("counter",.9,-.05);
+      station("counter",.9,1.8);
+    } else {
+      station("counter",-.92,-.05);
+      station("counter",.98,-.05);
+    }
+
+    players = Array.from(
+      {length:playerCount},
+      (_,i)=>makeChef(i)
+    );
+
+    initFX();
+    resize();
+    updateUI();
+  }
+
+  let audio = null;
+
+  function wakeAudio() {
+    if (!soundOn) return;
+
+    try {
+      if (!audio) {
+        audio = new (
+          window.AudioContext || window.webkitAudioContext
+        )();
+      }
+      if (audio.state==="suspended") {
+        audio.resume().catch(()=>{});
+      }
+    } catch {}
+  }
+
+  function note(
+    frequency=500,
+    duration=.08,
+    type="sine",
+    volume=.025,
+    delay=0
+  ) {
+    if (!soundOn || !audio || audio.state!=="running") return;
+
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+    const time = audio.currentTime+delay;
+
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency,time);
+    oscillator.frequency.exponentialRampToValueAtTime(
+      frequency*.82,time+duration
+    );
+
+    gain.gain.setValueAtTime(.0001,time);
+    gain.gain.exponentialRampToValueAtTime(volume,time+.008);
+    gain.gain.exponentialRampToValueAtTime(.0001,time+duration);
+
+    oscillator.connect(gain);
+    gain.connect(audio.destination);
+    oscillator.start(time);
+    oscillator.stop(time+duration+.02);
+
+    oscillator.onended = () => {
+      oscillator.disconnect();
+      gain.disconnect();
+    };
+  }
+
+  function successSound() {
+    note(660,.14,"sine",.04);
+    note(880,.18,"sine",.035,.09);
+    note(1100,.25,"sine",.025,.18);
+  }
+
+  function toast(text,duration=2) {
+    $("toast").textContent = text;
+    $("toast").classList.add("show");
+    toastTimer = duration;
+  }
+
+  const keys = new Set();
+
+  const touches = [
+    {x:0,y:0,action:false,dash:false},
+    {x:0,y:0,action:false,dash:false}
+  ];
+
+  const resetTouchHandlers = [];
+
+  function clearInputs() {
+    keys.clear();
+
+    for (const reset of resetTouchHandlers) reset();
+
+    touches.forEach((input,i)=>{
+      input.x = input.y = 0;
+      input.action = input.dash = false;
+
+      $("stick"+i).querySelector(".thumb").style.transform =
+        "translate(-50%,-50%)";
+
+      $("action"+i).classList.remove("pressed");
+      $("dash"+i).classList.remove("pressed");
+    });
+
+    players.forEach(player=>{
+      player.prevAction = false;
+      player.prevDash = false;
+      player.moving = 0;
+    });
+  }
+
+  function bindStick(index) {
+    const element = $("stick"+index);
+    const thumb = element.querySelector(".thumb");
+    let pointer = null;
+
+    function move(event) {
+      if (event.pointerId!==pointer) return;
+
+      const rect = element.getBoundingClientRect();
+      const radius = rect.width*.31;
+
+      let dx = event.clientX-rect.left-rect.width/2;
+      let dy = event.clientY-rect.top-rect.height/2;
+
+      const length = Math.hypot(dx,dy);
+
+      if (length>radius) {
+        dx *= radius/length;
+        dy *= radius/length;
+      }
+
+      touches[index].x = dx/radius;
+      touches[index].y = dy/radius;
+
+      thumb.style.transform =
+        `translate(-50%,-50%) translate(${dx}px,${dy}px)`;
+    }
+
+    function reset() {
+      const oldPointer = pointer;
+      pointer = null;
+      touches[index].x = touches[index].y = 0;
+      thumb.style.transform = "translate(-50%,-50%)";
+
+      try {
+        if (
+          oldPointer!==null &&
+          element.hasPointerCapture(oldPointer)
+        ) element.releasePointerCapture(oldPointer);
+      } catch {}
+    }
+
+    resetTouchHandlers.push(reset);
+
+    element.addEventListener("pointerdown",event=>{
+      if (state!=="play" || pointer!==null) return;
+
+      event.preventDefault();
+      pointer = event.pointerId;
+      element.setPointerCapture(pointer);
+      wakeAudio();
+      move(event);
+    });
+
+    element.addEventListener("pointermove",event=>{
+      if (pointer===null) return;
+      event.preventDefault();
+      move(event);
+    });
+
+    for (const eventName of [
+      "pointerup","pointercancel","lostpointercapture"
+    ]) {
+      element.addEventListener(eventName,event=>{
+        if (event.pointerId===pointer) reset();
+      });
+    }
+
+    element.addEventListener("contextmenu",e=>e.preventDefault());
+  }
+
+  function bindButton(index,kind,id) {
+    const element = $(id);
+    let pointer = null;
+
+    function reset() {
+      const oldPointer = pointer;
+      pointer = null;
+      touches[index][kind] = false;
+      element.classList.remove("pressed");
+
+      try {
+        if (
+          oldPointer!==null &&
+          element.hasPointerCapture(oldPointer)
+        ) element.releasePointerCapture(oldPointer);
+      } catch {}
+    }
+
+    resetTouchHandlers.push(reset);
+
+    element.addEventListener("pointerdown",event=>{
+      if (state!=="play" || pointer!==null) return;
+
+      event.preventDefault();
+      pointer = event.pointerId;
+      element.setPointerCapture(pointer);
+      touches[index][kind] = true;
+      element.classList.add("pressed");
+      wakeAudio();
+    });
+
+    for (const eventName of [
+      "pointerup","pointercancel","lostpointercapture"
+    ]) {
+      element.addEventListener(eventName,event=>{
+        if (event.pointerId===pointer) reset();
+      });
+    }
+
+    element.addEventListener("contextmenu",e=>e.preventDefault());
+  }
+
+  for (let i=0;i<2;i++) {
+    bindStick(i);
+    bindButton(i,"action","action"+i);
+    bindButton(i,"dash","dash"+i);
+  }
+
+  const gameCodes = new Set([
+    "KeyW","KeyA","KeyS","KeyD","KeyE","Space",
+    "ArrowUp","ArrowDown","ArrowLeft","ArrowRight",
+    "Enter","Slash","ShiftRight"
+  ]);
+
+  window.addEventListener("keydown",event=>{
+    if (event.code==="Escape" && !event.repeat) {
+      if (state==="play") pauseGame();
+      else if (state==="pause") resumeGame();
+      return;
+    }
+
+    if (state!=="play") return;
+
+    if (gameCodes.has(event.code)) {
+      event.preventDefault();
+      keys.add(event.code);
+      wakeAudio();
+    }
+  });
+
+  window.addEventListener("keyup",event=>{
+    keys.delete(event.code);
+  });
+
+  window.addEventListener("blur",()=>{
+    if (state==="play") pauseGame();
+    clearInputs();
+  });
+
+  document.addEventListener("visibilitychange",()=>{
+    if (document.hidden && state==="play") pauseGame();
+  });
+
+  window.addEventListener("gamepadconnected",()=>{
+    toast("เชื่อมต่อ Gamepad แล้ว · ก้านซ้ายเดิน · A ทำ · X พุ่ง",4);
+  });
+
+  window.addEventListener("gamepaddisconnected",()=>{
+    if (state==="play") {
+      pauseGame();
+      toast("จอยถูกตัดการเชื่อมต่อ เกมพักให้แล้ว",4);
+    }
+  });
+
+  function getPads() {
+    try {
+      return Array.from(navigator.getGamepads?.() || []).filter(Boolean);
+    } catch {
+      return [];
+    }
+  }
+
+  function readInput(index,pads) {
+    const touch = touches[index];
+
+    let x = touch.x;
+    let y = touch.y;
+    let action = touch.action;
+    let dash = touch.dash;
+
+    if (index===0) {
+      x += (keys.has("KeyD")?1:0)-(keys.has("KeyA")?1:0);
+      y += (keys.has("KeyS")?1:0)-(keys.has("KeyW")?1:0);
+      action = action || keys.has("KeyE");
+      dash = dash || keys.has("Space");
+    } else {
+      x += (keys.has("ArrowRight")?1:0)-(keys.has("ArrowLeft")?1:0);
+      y += (keys.has("ArrowDown")?1:0)-(keys.has("ArrowUp")?1:0);
+      action = action || keys.has("Enter");
+      dash = dash || keys.has("Slash") || keys.has("ShiftRight");
+    }
+
+    const pad = pads[index];
+
+    if (pad) {
+      const px = pad.axes[0] || 0;
+      const py = pad.axes[1] || 0;
+      const length = Math.hypot(px,py);
+
+      if (length>.18) {
+        const magnitude = clamp((length-.18)/.82,0,1);
+        x += px/length*magnitude;
+        y += py/length*magnitude;
+      }
+
+      x += (pad.buttons[15]?.pressed?1:0)-
+           (pad.buttons[14]?.pressed?1:0);
+      y += (pad.buttons[13]?.pressed?1:0)-
+           (pad.buttons[12]?.pressed?1:0);
+
+      action = action || !!pad.buttons[0]?.pressed;
+      dash = dash || !!pad.buttons[2]?.pressed;
+    }
+
+    const length = Math.hypot(x,y);
+
+    if (length>1) {
+      x /= length;
+      y /= length;
+    }
+
+    return {x,y,action,dash};
+  }
+
+  function nearestStation(player) {
+    const position = player.root.position;
+    let best = null;
+    let bestScore = Infinity;
+
+    for (const s of stations) {
+      const dx = Math.abs(position.x-s.x);
+      const dz = Math.abs(position.z-s.z);
+
+      const edgeDistance = Math.hypot(
+        Math.max(0,dx-s.w/2),
+        Math.max(0,dz-s.d/2)
+      );
+
+      if (edgeDistance>.91) continue;
+
+      const distance = edgeDistance+Math.hypot(dx,dz)*.22;
+
+      if (distance<bestScore) {
+        bestScore = distance;
+        best = s;
+      }
+    }
+
+    return best;
+  }
+
+  function blocked(x,z) {
+    if (x< -6.78 || x>6.78 || z< -4.91 || z>4.94) return true;
+
+    const radius = .29;
+
+    return stations.some(s=>
+      Math.abs(x-s.x)<s.w/2+radius &&
+      Math.abs(z-s.z)<s.d/2+radius
+    );
+  }
+
+  function canFit(ids,recipe) {
+    if (ids.length>recipe.need.length) return false;
+
+    return ids.every(id=>
+      ids.filter(value=>value===id).length <=
+      recipe.need.filter(value=>value===id).length
+    );
+  }
+
+  function interact(player) {
+    const s = player.near;
+
+    if (!s) {
+      toast("เดินเข้าใกล้สถานีที่ต้องการก่อน",1.1);
+      return;
+    }
+
+    if (s.type==="crate") {
+      if (player.hand) {
+        toast("มือไม่ว่าง · วางของที่เคาน์เตอร์กลางได้",1.4);
+        return;
+      }
+
+      if (s.ingredient==="fish" && stageIndex===0) {
+        toast("เมนูปลาเริ่มในด่าน 2",1.5);
+        return;
+      }
+
+      setHand(player,{kind:"raw",id:s.ingredient});
+      note(520);
+      return;
+    }
+
+    if (s.type==="counter") {
+      if (!s.item && player.hand) {
+        s.item = player.hand;
+        setHand(player,null);
+        syncStation(s);
+        note(350);
+        return;
+      }
+
+      if (s.item && !player.hand) {
+        setHand(player,s.item);
+        s.item = null;
+        syncStation(s);
+        note(540);
+        return;
+      }
+
+      toast("ใช้มือว่างหยิบ หรือวางของบนช่องว่าง",1.4);
+      return;
+    }
+
+    if (s.type==="prep") {
+      if (player.hand && !s.item) {
+        if (player.hand.kind!=="raw") {
+          toast("เขียงใช้เตรียมวัตถุดิบสด",1.5);
+          return;
+        }
+
+        s.item = player.hand;
+        s.progress = 0;
+        setHand(player,null);
+        syncStation(s);
+        note(320);
+        toast("กดปุ่มทำงานค้างไว้เพื่อหั่น",1.7);
+        return;
+      }
+
+      if (!player.hand && s.item) {
+        if (s.item.kind==="cut") {
+          setHand(player,s.item);
+          s.item = null;
+          s.progress = 0;
+          syncStation(s);
+          note(570);
+        } else {
+          toast("กดค้างเพื่อหั่น · เสร็จแล้วปล่อยและกดอีกครั้งเพื่อหยิบ",2);
+        }
+        return;
+      }
+
+      if (player.hand && s.item) {
+        toast("เขียงนี้มีของอยู่แล้ว",1.4);
+      } else {
+        toast("หยิบวัตถุดิบมาวางก่อน",1.4);
+      }
+      return;
+    }
+
+    if (s.type==="mix" || s.type==="cook") {
+      if (s.phase==="burnt") {
+        if (player.hand) {
+          toast("ใช้มือว่างเพื่อล้างหม้อ",1.5);
+          return;
+        }
+
+        resetStation(s);
+        burst(s.x,1.4,s.z,0xd8e5d6,8);
+        note(240,.15,"triangle");
+        return;
+      }
+
+      if (s.phase==="ready") {
+        if (player.hand) {
+          toast("วางของในมือก่อน แล้วมารับอาหาร",1.5);
+          return;
+        }
+
+        setHand(player,{kind:"dish",id:s.recipe});
+        resetStation(s);
+        note(760,.12);
+        return;
+      }
+
+      if (s.phase==="cooking") {
+        toast("กำลังปรุง · เตรียมจานต่อไปได้เลย",1.3);
+        return;
+      }
+
+      if (!player.hand) {
+        if (s.ingredients.length) {
+          const id = s.ingredients.pop();
+          setHand(player,{kind:"cut",id});
+          syncStation(s);
+          note(520);
+        } else {
+          toast(
+            s.type==="mix"
+              ? "สลัด: มะเขือเทศหั่น + เห็ดหั่น"
+              : "ซุป: มะเขือเทศ + เห็ด · จานปลา: มะเขือเทศ + ปลา",
+            2
+          );
+        }
+        return;
+      }
+
+      if (player.hand.kind!=="cut") {
+        toast("วัตถุดิบต้องผ่านเขียงก่อน",1.6);
+        return;
+      }
+
+      const ids = [...s.ingredients,player.hand.id];
+
+      const candidates = Object.entries(RECIPES).filter(([id,r])=>
+        r.station===s.type &&
+        allowedDishes().includes(id) &&
+        canFit(ids,r)
+      );
+
+      if (!candidates.length) {
+        toast("ส่วนผสมนี้ไม่ตรงสูตร · มือว่างกดเอาของเดิมออกได้",2.3);
+        note(170);
+        return;
+      }
+
+      s.ingredients.push(player.hand.id);
+      setHand(player,null);
+      note(420,.08,"triangle");
+
+      const completed = candidates.find(([,recipe])=>
+        recipe.need.length===s.ingredients.length
+      );
+
+      if (completed) {
+        s.recipe = completed[0];
+        s.timer = 0;
+        s.phase = s.type==="mix" ? "ready" : "cooking";
+
+        if (s.phase==="ready") {
+          burst(s.x,1.4,s.z,0xb7dfa7,8);
+          note(800,.12);
+        }
+      }
+
+      syncStation(s);
+      return;
+    }
+
+    if (s.type==="serve") {
+      if (!player.hand || player.hand.kind!=="dish") {
+        toast("นำอาหารที่จัดจานเสร็จแล้วมาเสิร์ฟ",1.5);
+        return;
+      }
+
+      const matches = orders
+        .filter(order=>order.recipe===player.hand.id)
+        .sort((a,b)=>a.left-b.left);
+
+      if (!matches.length) {
+        toast("ยังไม่มีออร์เดอร์จานนี้ · พักไว้บนเคาน์เตอร์ก่อนได้",2);
+        return;
+      }
+
+      const order = matches[0];
+      const value = RECIPES[order.recipe].value;
+
+      const points = Math.round(
+        value*(1+Math.min(combo,5)*.2)+order.left/order.max*35
+      );
+
+      score += points;
+      served++;
+      combo++;
+
+      orders = orders.filter(value=>value!==order);
+      setHand(player,null);
+
+      burst(s.x,1.5,s.z,THEMES[themeIndex].accent,27);
+      successSound();
+      toast(`เสิร์ฟสำเร็จ +${points} · คอมโบ ${combo}`,1.6);
+
+      if (orders.length===0) {
+        spawnTimer = Math.min(spawnTimer,2.2);
+      }
+      return;
+    }
+
+    if (s.type==="trash") {
+      if (player.hand) {
+        setHand(player,null);
+        note(170,.1,"triangle");
+        toast("ทิ้งของแล้ว",1);
+      } else {
+        toast("ถือของที่ต้องการทิ้งมาที่นี่",1.3);
+      }
+    }
+  }
+
+  function spawnOrder() {
+    const choices = allowedDishes();
+    let id;
+
+    if (generatedOrders===0) {
+      id = "salad";
+    } else if (generatedOrders===1) {
+      id = "soup";
+    } else if (generatedOrders===2 && stageIndex>0) {
+      id = "fish";
+    } else {
+      const counts = choices.map(id=>
+        orders.filter(order=>order.recipe===id).length
+      );
+      const minimum = Math.min(...counts);
+      const pool = choices.filter((id,i)=>counts[i]===minimum);
+      id = pool[Math.floor(rnd()*pool.length)];
+    }
+
+    const life =
+      [115,92,72][difficulty] *
+      (playerCount===1 ? 1.25 : 1) *
+      (1-stageIndex*.055);
+
+    orders.push({
+      id:++orderSerial,
+      recipe:id,
+      max:life,
+      left:life
+    });
+
+    generatedOrders++;
+  }
+
+  function updateGame(dt,t) {
+    timeLeft = Math.max(0,timeLeft-dt);
+
+    stations.forEach(s=>{s.working=false;});
+
+    const pads = getPads();
+
+    const forward = new THREE.Vector3(
+      -camera.position.x,0,-camera.position.z
+    ).normalize();
+
+    const right = new THREE.Vector3(
+      -forward.z,0,forward.x
+    );
+
+    for (const player of players) {
+      const input = readInput(player.index,pads);
+      const magnitude = Math.hypot(input.x,input.y);
+
+      player.dashCd = Math.max(0,player.dashCd-dt);
+      player.dashTime = Math.max(0,player.dashTime-dt);
+
+      if (
+        input.dash && !player.prevDash &&
+        player.dashCd===0 && magnitude>.15
+      ) {
+        player.dashTime = .19;
+        player.dashCd = 1.65;
+        note(230,.11,"triangle",.018);
+
+        burst(
+          player.root.position.x,.2,player.root.position.z,
+          player.index===0 ? 0x66e3ce : 0xffa785,6
+        );
+      }
+
+      player.prevDash = input.dash;
+
+      const velocity = right.clone()
+        .multiplyScalar(input.x)
+        .addScaledVector(forward,-input.y);
+
+      const speed = 3.05*(player.dashTime>0 ? 2.35 : 1);
+      const position = player.root.position;
+
+      const dx = velocity.x*speed*dt;
+      const dz = velocity.z*speed*dt;
+
+      if (!blocked(position.x+dx,position.z)) position.x += dx;
+      if (!blocked(position.x,position.z+dz)) position.z += dz;
+
+      if (magnitude>.05) {
+        const angle = Math.atan2(velocity.x,velocity.z);
+        const delta = Math.atan2(
+          Math.sin(angle-player.root.rotation.y),
+          Math.cos(angle-player.root.rotation.y)
+        );
+
+        player.root.rotation.y += delta*Math.min(1,dt*15);
+        player.walk += dt*(player.dashTime>0 ? 20 : 11)*magnitude;
+      }
+
+      player.moving = magnitude;
+
+      player.body.position.y = magnitude>.05
+        ? Math.abs(Math.sin(player.walk))*.037
+        : Math.sin(t*2+player.index)*.008;
+
+      player.legs[0].rotation.x =
+        Math.sin(player.walk)*magnitude*.5;
+      player.legs[1].rotation.x =
+        -Math.sin(player.walk)*magnitude*.5;
+
+      player.arms[0].rotation.x = player.hand
+        ? -.7 : -Math.sin(player.walk)*magnitude*.35;
+      player.arms[1].rotation.x = player.hand
+        ? -.7 : Math.sin(player.walk)*magnitude*.35;
+
+      player.near = nearestStation(player);
+
+      if (input.action && !player.prevAction) interact(player);
+
+      const s = player.near;
+
+      if (
+        input.action && !player.hand &&
+        s?.type==="prep" &&
+        s.item?.kind==="raw" &&
+        !s.working
+      ) {
+        s.working = true;
+        s.progress += dt;
+        s.soundTick -= dt;
+
+        if (s.soundTick<=0) {
+          note(180+range(0,70),.035,"triangle",.04);
+          s.soundTick = .19;
+        }
+
+        if (s.progress>=chopDuration()) {
+          s.item = {kind:"cut",id:s.item.id};
+          s.progress = chopDuration();
+          syncStation(s);
+          burst(s.x,1.35,s.z,0xece5b9,7);
+          note(690,.09);
+        }
+      }
+
+      player.prevAction = input.action;
+    }
+
+    for (const s of stations) {
+      if (s.phase==="cooking") {
+        s.timer += dt;
+
+        if (s.timer>=cookDuration()) {
+          s.phase = "ready";
+          s.timer = 0;
+          syncStation(s);
+
+          note(850,.12);
+          note(1050,.13,"sine",.025,.09);
+          burst(s.x,1.55,s.z,0xe5cf91,10);
+        }
+      } else if (s.type==="cook" && s.phase==="ready") {
+        s.timer += dt;
+
+        if (s.timer>=burnDuration()) {
+          s.phase = "burnt";
+          combo = 0;
+          syncStation(s);
+          note(135,.25,"triangle",.04);
+          toast("อาหารไหม้! ใช้มือว่างกดล้างหม้อ",2.4);
+        }
+      }
+
+      const nearby = players.find(player=>player.near===s);
+      s.halo.visible = !!nearby;
+
+      if (nearby) {
+        s.halo.material.color.setHex(
+          nearby.index===0 ? 0x66e3ce : 0xffa785
+        );
+      }
+    }
+
+    for (let i=orders.length-1;i>=0;i--) {
+      orders[i].left -= dt;
+
+      if (orders[i].left<=0) {
+        orders.splice(i,1);
+        missed++;
+        combo = 0;
+        score = Math.max(0,score-35);
+        note(180,.17,"triangle",.03);
+        toast("ลูกค้ารอนานเกินไป · เสีย 35 คะแนน",1.7);
+      }
+    }
+
+    spawnTimer -= dt;
+
+    const cap = playerCount===1 ? 3 : 4;
+
+    if (spawnTimer<=0 && orders.length<cap) {
+      spawnOrder();
+
+      spawnTimer =
+        ([24,20,16][difficulty]-stageIndex*1.7) *
+        (playerCount===1 ? 1.35 : 1);
+    }
+
+    if (timeLeft<=0) finishGame();
+  }
+
+  function actionText(player) {
+    const s = player.near;
+
+    if (!s) return "หยิบ / ทำ";
+
+    if (s.type==="crate") {
+      return player.hand
+        ? "มือไม่ว่าง"
+        : "หยิบ "+ING[s.ingredient].icon;
+    }
+
+    if (s.type==="prep") {
+      if (player.hand) return "วางบนเขียง";
+      if (s.item?.kind==="raw") return "กดค้างหั่น";
+      return s.item ? "หยิบ" : "รอวัตถุดิบ";
+    }
+
+    if (s.type==="cook" || s.type==="mix") {
+      if (s.phase==="ready") return "ยกอาหาร";
+      if (s.phase==="burnt") return "ล้างหม้อ";
+      if (s.phase==="cooking") return "กำลังปรุง";
+
+      if (player.hand) {
+        return s.type==="mix" ? "จัดจาน" : "ใส่หม้อ";
+      }
+      return s.ingredients.length ? "เอาของออก" : "ดูสูตร";
+    }
+
+    if (s.type==="serve") return "เสิร์ฟ";
+    if (s.type==="trash") return "ทิ้ง";
+
+    return player.hand ? "วางของ" : "หยิบ";
+  }
+
+  const labelPos = new THREE.Vector3();
+
+  function positionLabels() {
+    const visible =
+      state==="play" ||
+      state==="pause" ||
+      (state==="help" && helpReturn!=="menu");
+
+    $("labels").style.display = visible ? "block" : "none";
+
+    if (!visible) return;
+
+    for (const s of stations) {
+      labelPos.set(s.x,1.7,s.z).project(camera);
+
+      s.el.style.left =
+        (labelPos.x*.5+.5)*innerWidth+"px";
+      s.el.style.top =
+        (-labelPos.y*.5+.5)*innerHeight+"px";
+    }
+  }
+
+  function updateUI() {
+    const whole = Math.ceil(timeLeft);
+
+    $("clock").textContent =
+      `${Math.floor(whole/60)}:${String(whole%60).padStart(2,"0")}`;
+
+    $("clock").style.color = timeLeft<25 ? "#ffab88" : "";
+    $("served").textContent = `${served} / ${goal}`;
+    $("score").textContent = score;
+
+    $("combo").textContent = combo>1
+      ? `×${(1+Math.min(combo,5)*.2).toFixed(1)}`
+      : "";
+
+    $("stageBadge").textContent =
+      THEMES[themeIndex].name+" · "+(stageIndex+1);
+
+    $("orders").innerHTML = orders.map(order=>{
+      const recipe = RECIPES[order.recipe];
+      const urgent = order.left/order.max<.27;
+
+      return `
+        <div class="order ${urgent?"urgent":""}">
+          <div class="title">
+            <span>${recipe.icon} ${dishName(order.recipe)}</span>
+            <span class="orderTime">${Math.ceil(order.left)}s</span>
+          </div>
+          <div class="ingredients">
+            ${recipe.need.map(id=>ING[id].icon).join(" + ")}
+            · หั่น → ${recipe.station==="mix"?"จัดจาน":"เตา"}
+          </div>
+          <div class="track">
+            <b style="width:${clamp(order.left/order.max*100,0,100)}%"></b>
+          </div>
+        </div>`;
+    }).join("");
+
+    for (const player of players) {
+      $("hand"+player.index).textContent =
+        `P${player.index+1} · ${itemName(player.hand)}`;
+
+      $("action"+player.index).textContent = actionText(player);
+
+      $("dash"+player.index).textContent = player.dashCd>0
+        ? `พุ่ง ${player.dashCd.toFixed(1)}`
+        : "พุ่ง";
+
+      $("dash"+player.index).style.opacity =
+        player.dashCd>0 ? ".5" : "1";
+    }
+
+    const titles = {
+      prep:"🔪 เขียง",
+      cook:"♨ เตา",
+      mix:"🥗 จัดจาน",
+      serve:"✦ ส่งอาหาร",
+      trash:"♻ ทิ้ง",
+      counter:"↔ วางส่งต่อ"
+    };
+
+    for (const s of stations) {
+      const title = s.type==="crate"
+        ? ING[s.ingredient].icon+" "+ING[s.ingredient].name
+        : titles[s.type];
+
+      let sub = "";
+      let progress = null;
+
+      if (
+        s.type==="crate" &&
+        s.ingredient==="fish" &&
+        stageIndex===0
+      ) {
+        sub = "เริ่มด่าน 2";
+      }
+
+      if (s.type==="prep" && s.item) {
+        sub = s.item.kind==="cut" ? "พร้อมหยิบ" : "กดค้างเพื่อหั่น";
+
+        progress = s.item.kind==="cut"
+          ? 1 : s.progress/chopDuration();
+      }
+
+      if (s.type==="counter" && s.item) {
+        sub = itemName(s.item);
+      }
+
+      if (s.type==="cook" || s.type==="mix") {
+        if (s.phase==="idle" && s.ingredients.length) {
+          sub = s.ingredients
+            .map(id=>ING[id].icon).join(" + ")+" + ?";
+        }
+
+        if (s.phase==="cooking") {
+          sub = `ปรุง ${Math.ceil(cookDuration()-s.timer)}s`;
+          progress = s.timer/cookDuration();
+        }
+
+        if (s.phase==="ready") {
+          sub = "พร้อม! "+RECIPES[s.recipe].icon;
+          progress = s.type==="cook"
+            ? 1-s.timer/burnDuration()
+            : 1;
+        }
+
+        if (s.phase==="burnt") sub = "ไหม้ · มือว่างกดล้าง";
+      }
+
+      s.el.className = "stationLabel" +
+        (s.phase==="ready" ? " ready" : "") +
+        (s.phase==="burnt" ? " burnt" : "");
+
+      players.forEach(player=>{
+        if (player.near===s) {
+          s.el.classList.add("near"+(player.index+1));
+        }
+      });
+
+      const bar = progress!==null ? `
+        <div class="track">
+          <b style="
+            width:${clamp(progress*100,0,100)}%;
+            background:${s.phase==="ready"&&progress<.35?"#ef926f":"#80d0b1"};
+          "></b>
+        </div>` : "";
+
+      s.el.innerHTML = `
+        <span>${title}</span>
+        ${sub?`<small>${sub}</small>`:""}
+        ${bar}`;
+    }
+  }
+
+  function applyControlUI() {
+    const running = !["menu","result"].includes(state);
+    const touch = $("controlsSelect").value==="both";
+
+    $("hud").hidden = !running;
+    $("dock").hidden = !running || !touch;
+    $("pad1").hidden = playerCount!==2;
+    $("guide").hidden = !running || touch;
+    $("portraitHint").hidden = !running || !touch;
+  }
+
+  function updateMenu() {
+    playerCount = Number($("playersSelect").value);
+    difficulty = Number($("difficultySelect").value);
+
+    $("themeDesc").textContent = THEMES[themeIndex].desc;
+
+    document.querySelectorAll(".theme").forEach(button=>{
+      button.classList.toggle(
+        "active",
+        Number(button.dataset.theme)===themeIndex
+      );
+    });
+
+    $("levels").innerHTML = [0,1,2].map(index=>{
+      const record = save.records[
+        `${themeIndex}-${index}-${playerCount}-${difficulty}`
+      ];
+
+      const stars = clamp(
+        Math.floor(Number(record?.stars)||0),0,3
+      );
+
+      return `
+        <button
+          class="level ${index===stageIndex?"active":""}"
+          data-level="${index}">
+          ${["เปิดร้าน","ลูกค้าประจำ","มื้อใหญ่"][index]}
+          · ${120+index*20}s
+          <b>${"★".repeat(stars)}${"☆".repeat(3-stars)}</b>
+        </button>`;
+    }).join("");
+
+    $("levels").querySelectorAll("button").forEach(button=>{
+      button.onclick = () => {
+        stageIndex = Number(button.dataset.level);
+        updateMenu();
+        buildWorld();
+      };
+    });
+  }
+
+  function hideOverlays() {
+    for (const id of ["menu","help","pause","result"]) {
+      $(id).hidden = true;
+    }
+  }
+
+  function startGame() {
+    wakeAudio();
+    document.activeElement?.blur();
+
+    playerCount = Number($("playersSelect").value);
+    difficulty = Number($("difficultySelect").value);
+
+    timeLeft = 120+stageIndex*20;
+    score = served = missed = combo = 0;
+
+    goal = Math.max(
+      2,
+      (playerCount===1 ? 3 : 5) +
+      stageIndex +
+      (difficulty===2 ? 1 : 0) -
+      (difficulty===0 ? 1 : 0)
+    );
+
+    orders = [];
+    spawnTimer = 9;
+    orderSerial = generatedOrders = 0;
+
+    clearInputs();
+    buildWorld();
+    spawnOrder();
+
+    hideOverlays();
+    state = "play";
+    helpReturn = "play";
+
+    applyControlUI();
+    updateUI();
+
+    if (!save.seen) {
+      save.seen = true;
+      persist();
+      openHelp();
+    } else {
+      toast(`เป้าหมาย ${goal} จาน · ${THEMES[themeIndex].thai}`,3);
+    }
+  }
+
+  function openHelp() {
+    helpReturn = state;
+    state = "help";
+    clearInputs();
+    $("help").hidden = false;
+  }
+
+  function closeHelp() {
+    $("help").hidden = true;
+    state = helpReturn;
+    clearInputs();
+
+    if (state==="play") {
+      toast("เปิดร้านแล้ว! เริ่มจากหยิบมะเขือเทศกับเห็ด",2.5);
+    }
+  }
+
+  function pauseGame() {
+    if (state!=="play") return;
+    state = "pause";
+    clearInputs();
+    $("pause").hidden = false;
+  }
+
+  function resumeGame() {
+    if (state!=="pause") return;
+
+    wakeAudio();
+    $("pause").hidden = true;
+    state = "play";
+    clearInputs();
+  }
+
+  function goMenu() {
+    clearInputs();
+    hideOverlays();
+
+    state = "menu";
+    helpReturn = "menu";
+
+    $("menu").hidden = false;
+    updateMenu();
+    applyControlUI();
+    buildWorld();
+  }
+
+  function finishGame() {
+    state = "result";
+    clearInputs();
+
+    lastWin = served>=goal;
+
+    const stars = lastWin
+      ? Math.min(3,1+Math.floor((served-goal)/2))
+      : 0;
+
+    const key = modeKey();
+    const old = save.records[key] || {stars:0,score:0};
+
+    save.records[key] = {
+      stars:Math.max(stars,Number(old.stars)||0),
+      score:Math.max(score,Number(old.score)||0)
+    };
+
+    persist();
+    applyControlUI();
+    $("result").hidden = false;
+
+    $("resultTitle").textContent =
+      lastWin ? "คืนนี้ครัวเราเอาอยู่!" : "อีกนิดเดียว เชฟ!";
+
+    $("stars").textContent =
+      "★".repeat(stars)+"☆".repeat(3-stars);
+
+    $("resultText").textContent = lastWin
+      ? `ผ่านเป้า ${goal} จาน · ส่งเกินเป้า 2 จานได้ 2 ดาว และเกิน 4 จานได้ 3 ดาว`
+      : `ส่งได้ ${served} จากเป้า ${goal} จาน ลองแบ่งคนหั่นกับคนปรุง หรือปรับเป็นโหมดสบาย ๆ`;
+
+    $("resServed").textContent = served;
+    $("resScore").textContent = score;
+    $("resMissed").textContent = missed;
+
+    $("nextBtn").textContent = !lastWin
+      ? "ลองด่านนี้อีกครั้ง"
+      : themeIndex===2 && stageIndex===2
+        ? "ครบทั้ง 9 ด่าน · กลับเลือกครัว"
+        : "ไปด่านถัดไป";
+
+    if (lastWin) successSound();
+    else note(220,.3,"triangle",.035);
+  }
+
+  $("startBtn").onclick = startGame;
+  $("menuHelp").onclick = openHelp;
+  $("closeHelp").onclick = closeHelp;
+  $("pauseBtn").onclick = pauseGame;
+  $("resumeBtn").onclick = resumeGame;
+  $("pauseHelp").onclick = openHelp;
+  $("restartBtn").onclick = startGame;
+  $("exitBtn").onclick = goMenu;
+  $("retryBtn").onclick = startGame;
+  $("resultMenu").onclick = goMenu;
+
+  $("nextBtn").onclick = () => {
+    if (!lastWin) {
+      startGame();
+      return;
+    }
+
+    if (themeIndex===2 && stageIndex===2) {
+      goMenu();
+      return;
+    }
+
+    stageIndex++;
+
+    if (stageIndex>2) {
+      stageIndex = 0;
+      themeIndex++;
+    }
+
+    startGame();
+  };
+
+  document.querySelectorAll(".theme").forEach(button=>{
+    button.onclick = () => {
+      themeIndex = Number(button.dataset.theme);
+      stageIndex = 0;
+      updateMenu();
+      buildWorld();
+    };
+  });
+
+  $("playersSelect").onchange = () => {
+    updateMenu();
+    buildWorld();
+  };
+
+  $("difficultySelect").onchange = updateMenu;
+
+  $("qualitySelect").onchange = () => {
+    if (state==="menu") buildWorld();
+    else resize();
+  };
+
+  $("controlsSelect").onchange = applyControlUI;
+
+  $("soundBtn").onclick = () => {
+    soundOn = !soundOn;
+    $("soundBtn").textContent = soundOn ? "♪" : "♪̸";
+
+    if (soundOn) {
+      wakeAudio();
+      note(660);
+    }
+  };
+
+  $("fullBtn").onclick = async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else if (document.documentElement.requestFullscreen) {
+        await document.documentElement.requestFullscreen();
+      } else {
+        toast(
+          "อุปกรณ์นี้ไม่รองรับปุ่มเต็มจอ · ใช้แนวนอนหรือเพิ่มไปยังหน้าจอโฮม",
+          4
+        );
+      }
+    } catch {
+      toast("เบราว์เซอร์ไม่อนุญาตเต็มจอในบริบทนี้",3);
+    }
+  };
+
+  updateMenu();
+  buildWorld();
+  applyControlUI();
+
+  $("boot").hidden = true;
+
+  let last = performance.now();
+
+  function frame(now) {
+    requestAnimationFrame(frame);
+
+    const dt = Math.min((now-last)/1000,.05);
+    last = now;
+
+    if (state==="play" || state==="menu") elapsed += dt;
+
+    if (state==="play") updateGame(dt,elapsed);
+
+    if (state==="play" || state==="menu") {
+      visualUpdate(dt,elapsed);
+    }
+
+    if (state==="menu") {
+      players.forEach((player,index)=>{
+        player.body.position.y = Math.sin(elapsed*2+index)*.012;
+        player.root.rotation.y = Math.sin(elapsed*.4+index)*.18+.3;
+      });
+    }
+
+    if (toastTimer>0) {
+      toastTimer -= dt;
+      if (toastTimer<=0) $("toast").classList.remove("show");
+    }
+
+    uiTimer -= dt;
+
+    if (uiTimer<=0) {
+      updateUI();
+      uiTimer = .12;
+    }
+
+    positionLabels();
+    renderer.render(scene,camera);
+  }
+
+  requestAnimationFrame(frame);
+}
+
+boot().catch(error=>{
+  console.error(error);
+
+  document.getElementById("boot").innerHTML = `
+    <div style="max-width:440px">
+      <h2>เปิดครัว 3D ไม่สำเร็จ</h2>
+      <p style="line-height:1.8;color:#c5d8d0">
+        ตรวจสอบอินเทอร์เน็ต และเปิดด้วย Safari, Chrome หรือ Edge
+        ที่รองรับ WebGL หากเปิดจากแอปจัดการไฟล์
+        ให้ลองเปิดผ่านเว็บไซต์แทน
+      </p>
+      <button onclick="location.reload()">ลองโหลดอีกครั้ง</button>
+    </div>`;
+});
+</script>
+</body>
+</html>
